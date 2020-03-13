@@ -365,14 +365,17 @@ for ens_idx in range(NUM_ENSEMBLES):
                 break
     mrr /= len(qrels)
     print_message('model:{}, mrr:{}'.format(ens_idx + 1, mrr))
+
 with open(DATA_FILE_OUT_DEV, mode='w', encoding="utf-8") as f:
     for qid, docs in res_dev.items():
         ranked = sorted(docs, key=docs.get, reverse=True)
         for i in range(min(len(ranked), 10)):
             f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
+
 with open(DATA_FILE_OUT_EVAL, mode='w', encoding="utf-8") as f:
     for qid, docs in res_eval.items():
         ranked = sorted(docs, key=docs.get, reverse=True)
         for i in range(min(len(ranked), 10)):
             f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
+
 print_message('Finished')
