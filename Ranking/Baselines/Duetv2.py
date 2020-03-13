@@ -331,6 +331,8 @@ for ens_idx in range(NUM_ENSEMBLES):
                 res_dev[q][d] = 0
             res_dev[q][d] += out[i][0]
         is_complete = (meta_cnt < MB_SIZE)
+    print_message("eval 1")
+
     is_complete = False
     READER_EVAL.reset()
     net.eval()
@@ -359,6 +361,9 @@ for ens_idx in range(NUM_ENSEMBLES):
                 res_eval[q][d] = 0
             res_eval[q][d] += out[i][0]
         is_complete = (meta_cnt < MB_SIZE)
+
+    print_message("eval 2")
+
     mrr = 0
     for qid, docs in res_dev.items():
         ranked = sorted(docs, key=docs.get, reverse=True)
