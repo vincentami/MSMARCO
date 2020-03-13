@@ -223,8 +223,12 @@ DATA_FILE_IDFS = os.path.join(DATA_DIR, "idfnew.norm.tsv")
 
 #DATA_FILE_TRAIN = os.path.join(DATA_DIR, "triples.train.full.tsv")
 DATA_FILE_TRAIN = os.path.join(DATA_DIR, "triples.train.small.tsv")
-DATA_FILE_DEV = os.path.join(DATA_DIR, "top1000.dev.tsv")
-DATA_FILE_EVAL = os.path.join(DATA_DIR, "top1000.eval.tsv")
+
+# DATA_FILE_DEV = os.path.join(DATA_DIR, "top1000.dev.tsv")
+# DATA_FILE_EVAL = os.path.join(DATA_DIR, "top1000.eval.tsv")
+
+DATA_FILE_DEV = os.path.join(DATA_DIR, "top1000.dev")
+DATA_FILE_EVAL = os.path.join(DATA_DIR, "top1000.eval")
 
 # QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.tsv")
 QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.small.tsv")
