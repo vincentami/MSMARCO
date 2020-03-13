@@ -275,6 +275,7 @@ for ens_idx in range(NUM_ENSEMBLES):
     for ep_idx in range(NUM_EPOCHS):
         train_loss = 0.0
         net.train()
+        print_message("NUM_EPOCHS index:" + str(ep_idx))
         for mb_idx in range(EPOCH_SIZE):
             features = READER_TRAIN.get_minibatch()
             if ARCH_TYPE == 0:
@@ -298,6 +299,8 @@ for ens_idx in range(NUM_ENSEMBLES):
             loss.backward()
             optimizer.step()
             train_loss += loss.item()
+            print_message("EPOCH_SIZE index:" + str(mb_idx))
+
         torch.save(net, MODEL_FILE.format(ens_idx + 1, ep_idx + 1))
         print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
     is_complete = False
