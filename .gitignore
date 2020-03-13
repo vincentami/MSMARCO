@@ -20,4 +20,5 @@ ConversationalSearch/data/*
 __pycache__/
 .ipynb_checkpoints/
 OpenKPAnnotations.tsv
-
+*.idea
+.idea/workspace.xml
