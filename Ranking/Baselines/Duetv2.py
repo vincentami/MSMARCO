@@ -212,7 +212,8 @@ DROPOUT_RATE = 0.5
 MB_SIZE = 1024
 EPOCH_SIZE = 1024
 NUM_EPOCHS = 1
-NUM_ENSEMBLES = 8
+# NUM_ENSEMBLES = 8
+NUM_ENSEMBLES = 1
 LEARNING_RATE = 0.001
 
 DATA_DIR = 'data/'
@@ -250,6 +251,7 @@ with open(QRELS_DEV, mode='r', encoding="utf-8") as f:
         if qid not in qrels:
             qrels[qid] = []
         qrels[qid].append(did)
+    print_message("QRELS_DEV lineNo:" + str(len(qrels)))
 
 res_dev = {}
 res_eval = {}
