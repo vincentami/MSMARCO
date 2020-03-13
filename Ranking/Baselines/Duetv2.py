@@ -215,16 +215,24 @@ EPOCH_SIZE = 1024
 NUM_EPOCHS = 1
 NUM_ENSEMBLES = 8
 LEARNING_RATE = 0.001
+
 DATA_DIR = 'data\\'
+
 DATA_FILE_VOCAB = os.path.join(DATA_DIR, "word-vocab-small.tsv")
-DATA_EMBEDDINGS = os.path.join(DATA_DIR, "glove.6B\\glove.6B.{}d.txt".format(NUM_HIDDEN_NODES))
+DATA_EMBEDDINGS = os.path.join(DATA_DIR, "glove.6B.{}d.txt".format(NUM_HIDDEN_NODES))
 DATA_FILE_IDFS = os.path.join(DATA_DIR, "idfnew.norm.tsv")
-DATA_FILE_TRAIN = os.path.join(DATA_DIR, "triples.train.full.tsv")
+
+#DATA_FILE_TRAIN = os.path.join(DATA_DIR, "triples.train.full.tsv")
+DATA_FILE_TRAIN = os.path.join(DATA_DIR, "triples.train.small.tsv")
 DATA_FILE_DEV = os.path.join(DATA_DIR, "top1000.dev.tsv")
 DATA_FILE_EVAL = os.path.join(DATA_DIR, "top1000.eval.tsv")
-QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.tsv")
+
+# QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.tsv")
+QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.small.tsv")
+
 DATA_FILE_OUT_DEV = os.path.join(DATA_DIR, "output.dev.tsv")
 DATA_FILE_OUT_EVAL = os.path.join(DATA_DIR, "output.eval.tsv")
+
 MODEL_FILE = os.path.join(DATA_DIR, "duet.ens{}.ep{}.dnn")
 READER_TRAIN = DataReader(DATA_FILE_TRAIN, 0, True)
 READER_DEV = DataReader(DATA_FILE_DEV, 2, False)
