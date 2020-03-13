@@ -308,8 +308,10 @@ for ens_idx in range(NUM_ENSEMBLES):
     is_complete = False
     READER_DEV.reset()
     net.eval()
+    loop_cnt=0
     while not is_complete:
         features = READER_DEV.get_minibatch()
+        loop_cnt = loop_cnt + 1
         if ARCH_TYPE == 0:
             out = net(torch.from_numpy(features['local'][0]).to(DEVICE), None, None)
         elif ARCH_TYPE == 1:
@@ -323,6 +325,9 @@ for ens_idx in range(NUM_ENSEMBLES):
                       torch.from_numpy(features['mask_q']).to(DEVICE),
                       torch.from_numpy(features['mask_d'][0]).to(DEVICE))
         meta_cnt = len(features['meta'])
+
+        print_message("dev eval meta_cnt loop:" + str(loop_cnt))
+
         out = out.data.cpu()
         for i in range(meta_cnt):
             q = int(features['meta'][i][0])
@@ -338,8 +343,10 @@ for ens_idx in range(NUM_ENSEMBLES):
     is_complete = False
     READER_EVAL.reset()
     net.eval()
+    loop_cnt=0
     while not is_complete:
         features = READER_EVAL.get_minibatch()
+        loop_cnt = loop_cnt + 1
         if ARCH_TYPE == 0:
             out = net(torch.from_numpy(features['local'][0]).to(DEVICE), None, None)
         elif ARCH_TYPE == 1:
@@ -353,6 +360,7 @@ for ens_idx in range(NUM_ENSEMBLES):
                       torch.from_numpy(features['mask_q']).to(DEVICE),
                       torch.from_numpy(features['mask_d'][0]).to(DEVICE))
         meta_cnt = len(features['meta'])
+        print_message("eval eval meta_cnt loop:" + str(loop_cnt))
         out = out.data.cpu()
         for i in range(meta_cnt):
             q = int(features['meta'][i][0])
