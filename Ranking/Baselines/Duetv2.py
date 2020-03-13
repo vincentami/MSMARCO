@@ -215,7 +215,7 @@ NUM_EPOCHS = 1
 NUM_ENSEMBLES = 8
 LEARNING_RATE = 0.001
 
-DATA_DIR = 'data\\'
+DATA_DIR = 'data/'
 
 DATA_FILE_VOCAB = os.path.join(DATA_DIR, "word-vocab-small.tsv")
 DATA_EMBEDDINGS = os.path.join(DATA_DIR, "glove.6B.{}d.txt".format(NUM_HIDDEN_NODES))
