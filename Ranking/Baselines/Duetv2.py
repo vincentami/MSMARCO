@@ -39,6 +39,9 @@ class DataReader:
             for row in reader:
                 self.vocab[row[0]] = int(row[1])
         VOCAB_SIZE = len(self.vocab) + 1
+
+        print_message("vocab size:" + str(VOCAB_SIZE))
+
         embeddings = np.zeros((VOCAB_SIZE, NUM_HIDDEN_NODES), dtype=np.float32)
         with open(DATA_EMBEDDINGS, mode='r', encoding="utf-8") as f:
             for line in f:
@@ -47,6 +50,9 @@ class DataReader:
                 if idx > 0:
                     for i in range(NUM_HIDDEN_NODES):
                         embeddings[idx, i] = float(cols[i + 1])
+
+            print_message("DATA_EMBEDDINGS size:" + str(embeddings.size))
+
         self.pre_trained_embeddings = torch.tensor(embeddings)
 
     def __load_idfs(self):
@@ -55,6 +61,7 @@ class DataReader:
             reader = csv.reader(f, delimiter='\t')
             for row in reader:
                 self.idfs[row[0]] = float(row[1])
+            print_message("idf size:" + str(len(self.idfs)))
 
     def __init_data(self, file_name):
         self.reader = open(file_name, mode='r', encoding="utf-8")
