@@ -26,8 +26,8 @@
       <file leaf-file-name="Duetv2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="646">
-              <caret line="388" column="18" lean-forward="false" selection-start-line="388" selection-start-column="18" selection-end-line="388" selection-end-column="18" />
+            <state relative-caret-position="305">
+              <caret line="222" column="14" lean-forward="true" selection-start-line="222" selection-start-column="14" selection-end-line="222" selection-end-column="14" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -441,8 +441,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="388" column="18" lean-forward="false" selection-start-line="388" selection-start-column="18" selection-end-line="388" selection-end-column="18" />
+        <state relative-caret-position="305">
+          <caret line="222" column="14" lean-forward="true" selection-start-line="222" selection-start-column="14" selection-end-line="222" selection-end-column="14" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
