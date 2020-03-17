@@ -272,6 +272,8 @@ def goRun(reader_train, reader_dev, reader_eval):
 
             torch.save(net, MODEL_FILE.format(ens_idx + 1, ep_idx + 1))
             print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
+
+
         is_complete = False
         reader_dev.reset()
         net.eval()
@@ -293,7 +295,7 @@ def goRun(reader_train, reader_dev, reader_eval):
                           torch.from_numpy(features['mask_d'][0]).to(DEVICE))
             meta_cnt = len(features['meta'])
 
-            print_message("dev eval meta_cnt loop:" + str(loop_cnt))
+            print_message("dev eval meta_cnt:{} loop:{}".format(str(loop_cnt), str(meta_cnt)))
 
             out = out.data.cpu()
             for i in range(meta_cnt):
@@ -304,6 +306,7 @@ def goRun(reader_train, reader_dev, reader_eval):
                 if d not in res_dev[q]:
                     res_dev[q][d] = 0
                 res_dev[q][d] += out[i][0]
+
             is_complete = (meta_cnt < MB_SIZE)
         print_message("eval 1")
 
