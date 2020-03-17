@@ -295,7 +295,7 @@ def goRun(reader_train, reader_dev, reader_eval):
                           torch.from_numpy(features['mask_d'][0]).to(DEVICE))
             meta_cnt = len(features['meta'])
 
-            print_message("dev eval meta_cnt:{} loop:{}".format(str(loop_cnt), str(meta_cnt)))
+            print_message("dev eval meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
 
             out = out.data.cpu()
             for i in range(meta_cnt):
@@ -410,8 +410,8 @@ DATA_FILE_TRAIN = os.path.join(DATA_DIR, "triples.train.small.tsv")
 # DATA_FILE_DEV = os.path.join(DATA_DIR, "top1000.dev.tsv")
 # DATA_FILE_EVAL = os.path.join(DATA_DIR, "top1000.eval.tsv")
 
-DATA_FILE_DEV = os.path.join(DATA_DIR, "top1000.dev")
-DATA_FILE_EVAL = os.path.join(DATA_DIR, "top1000.eval")
+DATA_FILE_DEV = os.path.join(DATA_DIR, "1w.top1000.dev")
+DATA_FILE_EVAL = os.path.join(DATA_DIR, "1w.top1000.eval")
 
 # QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.tsv")
 QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.small.tsv")

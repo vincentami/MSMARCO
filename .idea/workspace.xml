@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="055c8f75-2bf8-4731-869b-31b874047f01" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Ranking/Baselines/Duetv2.py" afterPath="$PROJECT_DIR$/Ranking/Baselines/Duetv2.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,21 +27,11 @@
       <file leaf-file-name="Duetv2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="299" column="32" lean-forward="true" selection-start-line="299" selection-start-column="32" selection-end-line="299" selection-end-column="32" />
+            <state relative-caret-position="395">
+              <caret line="415" column="53" lean-forward="true" selection-start-line="415" selection-start-column="53" selection-end-line="415" selection-end-column="53" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="subsample.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Ranking/subsample.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="20" selection-end-column="53" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -60,6 +51,7 @@
       <find>DATA_FILE_TRAIN</find>
       <find>__allocate_minibatch</find>
       <find>cols</find>
+      <find>is_complete</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -444,18 +436,18 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Ranking/Baselines/duet2.py" />
-    <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duet.ipynb">
-      <provider selected="true" editor-type-id="ipnb-editor">
-        <state>
-          <selected id="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2017.1/python_stubs/348993582/__builtin__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="253">
           <caret line="2786" column="8" lean-forward="false" selection-start-line="2786" selection-start-column="8" selection-end-line="2786" selection-end-column="8" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duet.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
         </state>
       </provider>
     </entry>
@@ -469,8 +461,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="299" column="32" lean-forward="true" selection-start-line="299" selection-start-column="32" selection-end-line="299" selection-end-column="32" />
+        <state relative-caret-position="395">
+          <caret line="415" column="53" lean-forward="true" selection-start-line="415" selection-start-column="53" selection-end-line="415" selection-end-column="53" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
