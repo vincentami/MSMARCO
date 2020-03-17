@@ -144,7 +144,7 @@ class Flatten(nn.Module):
 
 
 class Duet(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, READER_TRAIN):
         super(Duet, self).__init__()
         self.embed = nn.Embedding(VOCAB_SIZE, NUM_HIDDEN_NODES)
         self.embed.weight = nn.Parameter(READER_TRAIN.pre_trained_embeddings, requires_grad=True)
@@ -280,7 +280,7 @@ def goRun(READER_TRAIN, READER_DEV, READER_EVAL):
     print_message('Learning rate: {}'.format(LEARNING_RATE))
     for ens_idx in range(NUM_ENSEMBLES):
         torch.manual_seed(ens_idx + 1)
-        net = Duet()
+        net = Duet(READER_TRAIN)
         net = net.to(DEVICE)
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(net.parameters(), lr=LEARNING_RATE)
