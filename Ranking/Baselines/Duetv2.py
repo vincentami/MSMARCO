@@ -295,7 +295,7 @@ def goRun(reader_train, reader_dev, reader_eval):
                           torch.from_numpy(features['mask_d'][0]).to(DEVICE))
             meta_cnt = len(features['meta'])
 
-            print_message("dev eval meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
+            print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
 
             out = out.data.cpu()
             for i in range(meta_cnt):
@@ -330,7 +330,9 @@ def goRun(reader_train, reader_dev, reader_eval):
                           torch.from_numpy(features['mask_q']).to(DEVICE),
                           torch.from_numpy(features['mask_d'][0]).to(DEVICE))
             meta_cnt = len(features['meta'])
-            print_message("eval eval meta_cnt loop:" + str(loop_cnt))
+
+            print_message("eval  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
+            
             out = out.data.cpu()
             for i in range(meta_cnt):
                 q = int(features['meta'][i][0])
