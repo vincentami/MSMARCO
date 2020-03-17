@@ -247,153 +247,175 @@ DATA_FILE_OUT_DEV = os.path.join(DATA_DIR, "output.dev.tsv")
 DATA_FILE_OUT_EVAL = os.path.join(DATA_DIR, "output.eval.tsv")
 
 MODEL_FILE = os.path.join(DATA_DIR, "duet.ens{}.ep{}.dnn")
-READER_TRAIN = DataReader(DATA_FILE_TRAIN, 0, True)
-READER_DEV = DataReader(DATA_FILE_DEV, 2, False)
-READER_EVAL = DataReader(DATA_FILE_EVAL, 2, False)
 
-qrels = {}
-with open(QRELS_DEV, mode='r', encoding="utf-8") as f:
-    reader = csv.reader(f, delimiter='\t')
-    for row in reader:
-        qid = int(row[0])
-        did = int(row[2])
-        if qid not in qrels:
-            qrels[qid] = []
-        qrels[qid].append(did)
-    print_message("QRELS_DEV lineNo:" + str(len(qrels)))
+def goInit():
 
-res_dev = {}
-res_eval = {}
+    print_message('GoInit Start')
 
-print_message('Starting')
-print_message('Learning rate: {}'.format(LEARNING_RATE))
-for ens_idx in range(NUM_ENSEMBLES):
-    torch.manual_seed(ens_idx + 1)
-    net = Duet()
-    net = net.to(DEVICE)
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(net.parameters(), lr=LEARNING_RATE)
-    print_message('Number of learnable parameters: {}'.format(net.parameter_count()))
-    for ep_idx in range(NUM_EPOCHS):
-        train_loss = 0.0
-        net.train()
-        print_message("NUM_EPOCHS index:" + str(ep_idx))
-        for mb_idx in range(EPOCH_SIZE):
-            features = READER_TRAIN.get_minibatch()
+    READER_TRAIN = DataReader(DATA_FILE_TRAIN, 0, True)
+    READER_DEV = DataReader(DATA_FILE_DEV, 2, False)
+    READER_EVAL = DataReader(DATA_FILE_EVAL, 2, False)
+
+    print_message('GoInit End')
+
+    return READER_TRAIN, READER_DEV, READER_EVAL
+
+def goRun(READER_TRAIN, READER_DEV, READER_EVAL):
+
+    qrels = {}
+    with open(QRELS_DEV, mode='r', encoding="utf-8") as f:
+        reader = csv.reader(f, delimiter='\t')
+        for row in reader:
+            qid = int(row[0])
+            did = int(row[2])
+            if qid not in qrels:
+                qrels[qid] = []
+            qrels[qid].append(did)
+        print_message("QRELS_DEV lineNo:" + str(len(qrels)))
+
+    res_dev = {}
+    res_eval = {}
+
+    print_message('Starting')
+    print_message('Learning rate: {}'.format(LEARNING_RATE))
+    for ens_idx in range(NUM_ENSEMBLES):
+        torch.manual_seed(ens_idx + 1)
+        net = Duet()
+        net = net.to(DEVICE)
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(net.parameters(), lr=LEARNING_RATE)
+        print_message('Number of learnable parameters: {}'.format(net.parameter_count()))
+        for ep_idx in range(NUM_EPOCHS):
+            train_loss = 0.0
+            net.train()
+            print_message("NUM_EPOCHS index:" + str(ep_idx))
+            for mb_idx in range(EPOCH_SIZE):
+                features = READER_TRAIN.get_minibatch()
+                if ARCH_TYPE == 0:
+                    out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(DEVICE), None, None) for i in
+                                           range(READER_TRAIN.num_docs)]), 1)
+                elif ARCH_TYPE == 1:
+                    out = torch.cat(tuple([net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
+                                               torch.from_numpy(features['dist_d'][i]).to(DEVICE),
+                                               torch.from_numpy(features['mask_q']).to(DEVICE),
+                                               torch.from_numpy(features['mask_d'][i]).to(DEVICE)) for i in
+                                           range(READER_TRAIN.num_docs)]), 1)
+                else:
+                    out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(DEVICE),
+                                               torch.from_numpy(features['dist_q']).to(DEVICE),
+                                               torch.from_numpy(features['dist_d'][i]).to(DEVICE),
+                                               torch.from_numpy(features['mask_q']).to(DEVICE),
+                                               torch.from_numpy(features['mask_d'][i]).to(DEVICE)) for i in
+                                           range(READER_TRAIN.num_docs)]), 1)
+                loss = criterion(out, torch.from_numpy(features['labels']).to(DEVICE))
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                train_loss += loss.item()
+                print_message("EPOCH_SIZE index:" + str(mb_idx))
+
+            torch.save(net, MODEL_FILE.format(ens_idx + 1, ep_idx + 1))
+            print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
+        is_complete = False
+        READER_DEV.reset()
+        net.eval()
+        loop_cnt=0
+        while not is_complete:
+            features = READER_DEV.get_minibatch()
+            loop_cnt = loop_cnt + 1
             if ARCH_TYPE == 0:
-                out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(DEVICE), None, None) for i in
-                                       range(READER_TRAIN.num_docs)]), 1)
+                out = net(torch.from_numpy(features['local'][0]).to(DEVICE), None, None)
             elif ARCH_TYPE == 1:
-                out = torch.cat(tuple([net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
-                                           torch.from_numpy(features['dist_d'][i]).to(DEVICE),
-                                           torch.from_numpy(features['mask_q']).to(DEVICE),
-                                           torch.from_numpy(features['mask_d'][i]).to(DEVICE)) for i in
-                                       range(READER_TRAIN.num_docs)]), 1)
+                out = net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
+                          torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(DEVICE),
+                                           torch.from_numpy(features['mask_d'][0]).to(DEVICE)).to(DEVICE))
             else:
-                out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(DEVICE),
-                                           torch.from_numpy(features['dist_q']).to(DEVICE),
-                                           torch.from_numpy(features['dist_d'][i]).to(DEVICE),
-                                           torch.from_numpy(features['mask_q']).to(DEVICE),
-                                           torch.from_numpy(features['mask_d'][i]).to(DEVICE)) for i in
-                                       range(READER_TRAIN.num_docs)]), 1)
-            loss = criterion(out, torch.from_numpy(features['labels']).to(DEVICE))
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            train_loss += loss.item()
-            print_message("EPOCH_SIZE index:" + str(mb_idx))
+                out = net(torch.from_numpy(features['local'][0]).to(DEVICE),
+                          torch.from_numpy(features['dist_q']).to(DEVICE),
+                          torch.from_numpy(features['dist_d'][0]).to(DEVICE),
+                          torch.from_numpy(features['mask_q']).to(DEVICE),
+                          torch.from_numpy(features['mask_d'][0]).to(DEVICE))
+            meta_cnt = len(features['meta'])
 
-        torch.save(net, MODEL_FILE.format(ens_idx + 1, ep_idx + 1))
-        print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
-    is_complete = False
-    READER_DEV.reset()
-    net.eval()
-    loop_cnt=0
-    while not is_complete:
-        features = READER_DEV.get_minibatch()
-        loop_cnt = loop_cnt + 1
-        if ARCH_TYPE == 0:
-            out = net(torch.from_numpy(features['local'][0]).to(DEVICE), None, None)
-        elif ARCH_TYPE == 1:
-            out = net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
-                      torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(DEVICE),
-                                       torch.from_numpy(features['mask_d'][0]).to(DEVICE)).to(DEVICE))
-        else:
-            out = net(torch.from_numpy(features['local'][0]).to(DEVICE),
-                      torch.from_numpy(features['dist_q']).to(DEVICE),
-                      torch.from_numpy(features['dist_d'][0]).to(DEVICE),
-                      torch.from_numpy(features['mask_q']).to(DEVICE),
-                      torch.from_numpy(features['mask_d'][0]).to(DEVICE))
-        meta_cnt = len(features['meta'])
+            print_message("dev eval meta_cnt loop:" + str(loop_cnt))
 
-        print_message("dev eval meta_cnt loop:" + str(loop_cnt))
+            out = out.data.cpu()
+            for i in range(meta_cnt):
+                q = int(features['meta'][i][0])
+                d = int(features['meta'][i][1])
+                if q not in res_dev:
+                    res_dev[q] = {}
+                if d not in res_dev[q]:
+                    res_dev[q][d] = 0
+                res_dev[q][d] += out[i][0]
+            is_complete = (meta_cnt < MB_SIZE)
+        print_message("eval 1")
 
-        out = out.data.cpu()
-        for i in range(meta_cnt):
-            q = int(features['meta'][i][0])
-            d = int(features['meta'][i][1])
-            if q not in res_dev:
-                res_dev[q] = {}
-            if d not in res_dev[q]:
-                res_dev[q][d] = 0
-            res_dev[q][d] += out[i][0]
-        is_complete = (meta_cnt < MB_SIZE)
-    print_message("eval 1")
+        is_complete = False
+        READER_EVAL.reset()
+        net.eval()
+        loop_cnt=0
+        while not is_complete:
+            features = READER_EVAL.get_minibatch()
+            loop_cnt = loop_cnt + 1
+            if ARCH_TYPE == 0:
+                out = net(torch.from_numpy(features['local'][0]).to(DEVICE), None, None)
+            elif ARCH_TYPE == 1:
+                out = net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
+                          torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(DEVICE),
+                                           torch.from_numpy(features['mask_d'][0]).to(DEVICE)).to(DEVICE))
+            else:
+                out = net(torch.from_numpy(features['local'][0]).to(DEVICE),
+                          torch.from_numpy(features['dist_q']).to(DEVICE),
+                          torch.from_numpy(features['dist_d'][0]).to(DEVICE),
+                          torch.from_numpy(features['mask_q']).to(DEVICE),
+                          torch.from_numpy(features['mask_d'][0]).to(DEVICE))
+            meta_cnt = len(features['meta'])
+            print_message("eval eval meta_cnt loop:" + str(loop_cnt))
+            out = out.data.cpu()
+            for i in range(meta_cnt):
+                q = int(features['meta'][i][0])
+                d = int(features['meta'][i][1])
+                if q not in res_eval:
+                    res_eval[q] = {}
+                if d not in res_eval[q]:
+                    res_eval[q][d] = 0
+                res_eval[q][d] += out[i][0]
+            is_complete = (meta_cnt < MB_SIZE)
 
-    is_complete = False
-    READER_EVAL.reset()
-    net.eval()
-    loop_cnt=0
-    while not is_complete:
-        features = READER_EVAL.get_minibatch()
-        loop_cnt = loop_cnt + 1
-        if ARCH_TYPE == 0:
-            out = net(torch.from_numpy(features['local'][0]).to(DEVICE), None, None)
-        elif ARCH_TYPE == 1:
-            out = net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
-                      torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(DEVICE),
-                                       torch.from_numpy(features['mask_d'][0]).to(DEVICE)).to(DEVICE))
-        else:
-            out = net(torch.from_numpy(features['local'][0]).to(DEVICE),
-                      torch.from_numpy(features['dist_q']).to(DEVICE),
-                      torch.from_numpy(features['dist_d'][0]).to(DEVICE),
-                      torch.from_numpy(features['mask_q']).to(DEVICE),
-                      torch.from_numpy(features['mask_d'][0]).to(DEVICE))
-        meta_cnt = len(features['meta'])
-        print_message("eval eval meta_cnt loop:" + str(loop_cnt))
-        out = out.data.cpu()
-        for i in range(meta_cnt):
-            q = int(features['meta'][i][0])
-            d = int(features['meta'][i][1])
-            if q not in res_eval:
-                res_eval[q] = {}
-            if d not in res_eval[q]:
-                res_eval[q][d] = 0
-            res_eval[q][d] += out[i][0]
-        is_complete = (meta_cnt < MB_SIZE)
+        print_message("eval 2")
 
-    print_message("eval 2")
+        mrr = 0
+        for qid, docs in res_dev.items():
+            ranked = sorted(docs, key=docs.get, reverse=True)
+            for i in range(min(len(ranked), 10)):
+                if ranked[i] in qrels[qid]:
+                    mrr += 1 / (i + 1)
+                    break
+        mrr /= len(qrels)
+        print_message('model:{}, mrr:{}'.format(ens_idx + 1, mrr))
 
-    mrr = 0
-    for qid, docs in res_dev.items():
-        ranked = sorted(docs, key=docs.get, reverse=True)
-        for i in range(min(len(ranked), 10)):
-            if ranked[i] in qrels[qid]:
-                mrr += 1 / (i + 1)
-                break
-    mrr /= len(qrels)
-    print_message('model:{}, mrr:{}'.format(ens_idx + 1, mrr))
+def goInfer(res_dev, res_eval):
+    print_message('Start Inference')
 
-with open(DATA_FILE_OUT_DEV, mode='w', encoding="utf-8") as f:
-    for qid, docs in res_dev.items():
-        ranked = sorted(docs, key=docs.get, reverse=True)
-        for i in range(min(len(ranked), 10)):
-            f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
+    with open(DATA_FILE_OUT_DEV, mode='w', encoding="utf-8") as f:
+        for qid, docs in res_dev.items():
+            ranked = sorted(docs, key=docs.get, reverse=True)
+            for i in range(min(len(ranked), 10)):
+                f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
 
-with open(DATA_FILE_OUT_EVAL, mode='w', encoding="utf-8") as f:
-    for qid, docs in res_eval.items():
-        ranked = sorted(docs, key=docs.get, reverse=True)
-        for i in range(min(len(ranked), 10)):
-            f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
+    with open(DATA_FILE_OUT_EVAL, mode='w', encoding="utf-8") as f:
+        for qid, docs in res_eval.items():
+            ranked = sorted(docs, key=docs.get, reverse=True)
+            for i in range(min(len(ranked), 10)):
+                f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
 
-print_message('Finished')
+    print_message('Finished Inference')
+
+if __name__ == "__main__":
+
+    reader_train, reader_dev, reader_eval = goInit()
+
+    res_dev, res_eval = goRun(reader_train, reader_dev, reader_eval)
+
+    goInfer(res_dev, res_eval)
