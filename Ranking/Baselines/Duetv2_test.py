@@ -45,12 +45,14 @@ class DataReader:
         embeddings = np.zeros((VOCAB_SIZE, NUM_HIDDEN_NODES), dtype=np.float32)
         with open(DATA_EMBEDDINGS, mode='r', encoding="utf-8") as f:
             for line in f:
-                cols = line.split()
+                cols = line.split(",")
                 idx = self.vocab.get(cols[0], 0)
-                if idx > 0:
+                if idx > 0 && len(cols) == (NUM_HIDDEN_NODES + 1):
                     for i in range(NUM_HIDDEN_NODES):
                         embeddings[idx, i] = float(cols[i + 1])
-
+                else:
+                    print_message("DATA_EMBEDDINGS err:{},{}".format(len(cols),line))
+                    
             print_message("DATA_EMBEDDINGS size:" + str(embeddings.size))
 
         self.pre_trained_embeddings = torch.tensor(embeddings)
