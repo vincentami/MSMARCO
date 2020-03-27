@@ -9,7 +9,7 @@ regex_multi_space = re.compile('\s+')
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: makeidf.py <allTerm_file> <allDoc_file>
+        print("Usage: makeidf.py <allTerm_file> <allDoc_file>")
         exit(-1)
     else:
         df = {}
