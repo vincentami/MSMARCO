@@ -43,3 +43,10 @@ if __name__ == "__main__":
                     score = float(cols[1])
                     if score > 0:
                         writer.write('{}\t{}\n'.format(cols[0], score / denom))
+
+        with open('vocab.tsv',  encoding = 'utf-8', mode='w' ) as writer:
+            index = 1
+            for k,v in df.items():
+                writer.write('{}\t{}\n'.format(k, index))
+                index = index + 1
+                
