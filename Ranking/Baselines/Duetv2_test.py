@@ -42,6 +42,7 @@ class DataReader:
 
         print_message("vocab size:" + str(VOCAB_SIZE))
 
+        none_index = 0
         embeddings = np.zeros((VOCAB_SIZE, NUM_HIDDEN_NODES), dtype=np.float32)
         with open(DATA_EMBEDDINGS, mode='r', encoding="utf-8") as f:
             for line in f:
@@ -51,9 +52,12 @@ class DataReader:
                     for i in range(NUM_HIDDEN_NODES):
                         embeddings[idx, i] = float(cols[i + 1])
                 else:
-                    print_message("DATA_EMBEDDINGS idx:{} err:{},{}".format(idx, len(cols),line))
+                    if (idx == 0):
+                        none_index = none_index + 1
+                    else :
+                        print_message("DATA_EMBEDDINGS idx:{} err:{},{}".format(idx, len(cols),line))
 
-            print_message("DATA_EMBEDDINGS size:" + str(embeddings.size))
+            print_message("DATA_EMBEDDINGS size:{} none_embeding:{}".format(embeddings.size, none_index))
 
         self.pre_trained_embeddings = torch.tensor(embeddings)
 
