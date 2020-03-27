@@ -27,7 +27,7 @@ if __name__ == "__main__":
                     if t in df:
                         df[t] += 1
                 n += 1
-        with open('idf.tsv', encoding = 'utf-8', mode='w') as writer:
+        with open('s_idf.tsv', encoding = 'utf-8', mode='w') as writer:
             for k, v in df.items():
                 writer.write('{}\t{}\n'.format(k, math.log(n / v) if v > 0 else 0))
 
@@ -36,15 +36,15 @@ if __name__ == "__main__":
             for line in reader:
                 n += 1
         denom = math.log(n)
-        with open('idf.tsv', encoding = 'utf-8', mode='r') as reader:
-            with open('idf.norm.tsv', encoding = 'utf-8', mode='w') as writer:
+        with open('s_idf.tsv', encoding = 'utf-8', mode='r') as reader:
+            with open('s_idf.norm.tsv', encoding = 'utf-8', mode='w') as writer:
                 for line in reader:
                     cols = line.split('\t')
                     score = float(cols[1])
                     if score > 0:
                         writer.write('{}\t{}\n'.format(cols[0], score / denom))
 
-        with open('vocab.tsv',  encoding = 'utf-8', mode='w' ) as writer:
+        with open('s_vocab.tsv',  encoding = 'utf-8', mode='w' ) as writer:
             index = 1
             for k,v in df.items():
                 writer.write('{}\t{}\n'.format(k, index))
