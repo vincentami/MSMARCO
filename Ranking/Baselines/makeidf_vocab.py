@@ -49,4 +49,3 @@ if __name__ == "__main__":
             for k,v in df.items():
                 writer.write('{}\t{}\n'.format(k, index))
                 index = index + 1
-                
