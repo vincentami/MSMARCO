@@ -51,7 +51,7 @@ class DataReader:
                     for i in range(NUM_HIDDEN_NODES):
                         embeddings[idx, i] = float(cols[i + 1])
                 else:
-                    print_message("DATA_EMBEDDINGS err:{},{}".format(len(cols),line))
+                    print_message("DATA_EMBEDDINGS idx:{} err:{},{}".format(idx, len(cols),line))
 
             print_message("DATA_EMBEDDINGS size:" + str(embeddings.size))
 
