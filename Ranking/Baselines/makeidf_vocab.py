@@ -23,7 +23,7 @@ if __name__ == "__main__":
         with open(sys.argv[2], encoding = 'utf-8', mode='r') as reader:
             for line in reader:
                 cols = line.split('\t')
-                for t in set(regex_multi_space.sub(' ', regex_drop_char.sub(' ', cols[1].lower())).strip().split()):
+                for t in set(regex_multi_space.sub(' ', regex_drop_char.sub(' ', cols[0].lower())).strip().split()):
                     if t in df:
                         df[t] += 1
                 n += 1
