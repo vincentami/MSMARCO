@@ -410,11 +410,9 @@ DATA_FILE_IDFS = os.path.join(DATA_DIR, "s_idf.norm.tsv")
 
 DATA_FILE_TRAIN = os.path.join(DATA_DIR, "s.format.duet_qsample.txt")
 
-# DATA_FILE_DEV = os.path.join(DATA_DIR, "top1000.dev.tsv")
-# DATA_FILE_EVAL = os.path.join(DATA_DIR, "top1000.eval.tsv")
 
-# DATA_FILE_DEV = os.path.join(DATA_DIR, "1w.top1000.dev")
-# DATA_FILE_EVAL = os.path.join(DATA_DIR, "1w.top1000.eval")
+DATA_FILE_DEV = os.path.join(DATA_DIR, "1w.top1000.dev")
+DATA_FILE_EVAL = os.path.join(DATA_DIR, "1w.top1000.eval")
 
 # QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.tsv")
 # QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.small.tsv")
