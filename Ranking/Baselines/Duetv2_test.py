@@ -321,7 +321,7 @@ def goRun(reader_train, reader_dev, reader_eval):
         for k,v in res_dev.items():
             pIndex = pIndex + 1
             if pIndex < 100:
-                print k,v
+                print(k,v)
 
     #     is_complete = False
     #     reader_eval.reset()
