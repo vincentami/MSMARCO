@@ -317,6 +317,12 @@ def goRun(reader_train, reader_dev, reader_eval):
             is_complete = (meta_cnt < MB_SIZE)
         print_message("eval 1")
 
+        pIndex = 0
+        for k,v in res_dev.items():
+            pIndex = pIndex + 1
+            if pIndex < 100:
+                print k,v
+
     #     is_complete = False
     #     reader_eval.reset()
     #     net.eval()
