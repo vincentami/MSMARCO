@@ -215,7 +215,7 @@ def goInit(data_file_train, data_file_dev, data_file_eval):
     print_message('GoInit Start')
 
     reader_train = DataReader(data_file_train, 0, True)
-    reader_dev = DataReader(data_file_dev, 2, False)
+    reader_dev = DataReader(data_file_dev, 3, False)
     reader_eval = DataReader(data_file_eval, 2, False)
 
     print_message('GoInit End')
@@ -235,7 +235,8 @@ def goRun(reader_train, reader_dev, reader_eval):
     #         qrels[qid].append(did)
     #     print_message("QRELS_DEV lineNo:" + str(len(qrels)))
     #
-    # res_dev = {}
+
+    res_dev = {}
     # res_eval = {}
 
     print_message('Starting')
@@ -280,42 +281,42 @@ def goRun(reader_train, reader_dev, reader_eval):
             print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
 
 
-    #     is_complete = False
-    #     reader_dev.reset()
-    #     net.eval()
-    #     loop_cnt=0
-    #     while not is_complete:
-    #         features = reader_dev.get_minibatch()
-    #         loop_cnt = loop_cnt + 1
-    #         if ARCH_TYPE == 0:
-    #             out = net(torch.from_numpy(features['local'][0]).to(DEVICE), None, None)
-    #         elif ARCH_TYPE == 1:
-    #             out = net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
-    #                       torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(DEVICE),
-    #                                        torch.from_numpy(features['mask_d'][0]).to(DEVICE)).to(DEVICE))
-    #         else:
-    #             out = net(torch.from_numpy(features['local'][0]).to(DEVICE),
-    #                       torch.from_numpy(features['dist_q']).to(DEVICE),
-    #                       torch.from_numpy(features['dist_d'][0]).to(DEVICE),
-    #                       torch.from_numpy(features['mask_q']).to(DEVICE),
-    #                       torch.from_numpy(features['mask_d'][0]).to(DEVICE))
-    #         meta_cnt = len(features['meta'])
-    #
-    #         print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
-    #
-    #         out = out.data.cpu()
-    #         for i in range(meta_cnt):
-    #             q = int(features['meta'][i][0])
-    #             d = int(features['meta'][i][1])
-    #             if q not in res_dev:
-    #                 res_dev[q] = {}
-    #             if d not in res_dev[q]:
-    #                 res_dev[q][d] = 0
-    #             res_dev[q][d] += out[i][0]
-    #
-    #         is_complete = (meta_cnt < MB_SIZE)
-    #     print_message("eval 1")
-    #
+        is_complete = False
+        reader_dev.reset()
+        net.eval()
+        loop_cnt=0
+        while not is_complete:
+            features = reader_dev.get_minibatch()
+            loop_cnt = loop_cnt + 1
+            if ARCH_TYPE == 0:
+                out = net(torch.from_numpy(features['local'][0]).to(DEVICE), None, None)
+            elif ARCH_TYPE == 1:
+                out = net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
+                          torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(DEVICE),
+                                           torch.from_numpy(features['mask_d'][0]).to(DEVICE)).to(DEVICE))
+            else:
+                out = net(torch.from_numpy(features['local'][0]).to(DEVICE),
+                          torch.from_numpy(features['dist_q']).to(DEVICE),
+                          torch.from_numpy(features['dist_d'][0]).to(DEVICE),
+                          torch.from_numpy(features['mask_q']).to(DEVICE),
+                          torch.from_numpy(features['mask_d'][0]).to(DEVICE))
+            meta_cnt = len(features['meta'])
+
+            print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
+
+            out = out.data.cpu()
+            for i in range(meta_cnt):
+                q = features['meta'][i][0]
+                d = features['meta'][i][1]
+                if q not in res_dev:
+                    res_dev[q] = {}
+                if d not in res_dev[q]:
+                    res_dev[q][d] = 0
+                res_dev[q][d] += out[i][0]
+
+            is_complete = (meta_cnt < MB_SIZE)
+        print_message("eval 1")
+
     #     is_complete = False
     #     reader_eval.reset()
     #     net.eval()
@@ -417,7 +418,9 @@ DATA_FILE_IDFS = os.path.join(DATA_DIR, "s_idf.norm.tsv")
 DATA_FILE_TRAIN = os.path.join(DATA_DIR, "s.format.duet_qsample.txt")
 
 
-DATA_FILE_DEV = os.path.join(DATA_DIR, "1w.top1000.dev")
+DATA_FILE_DEV = os.path.join(DATA_DIR, "s_eval.txt")
+
+# DATA_FILE_DEV = os.path.join(DATA_DIR, "1w.top1000.dev")
 DATA_FILE_EVAL = os.path.join(DATA_DIR, "1w.top1000.eval")
 
 # QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.tsv")
