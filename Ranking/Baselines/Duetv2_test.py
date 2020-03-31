@@ -90,8 +90,8 @@ def adNdcgPrint(df):
         # tmpV = sorted(v, key=lambda x: x[0] )
 
         pIndex = pIndex + 1
-        if(pIndex < 50):
-            print_message("{} {}".format(k,tmpV))
+        # if(pIndex < 50):
+        #     print_message("{} {}".format(k,tmpV))
 
         val = []
         for i in range(len(tmpV)):
