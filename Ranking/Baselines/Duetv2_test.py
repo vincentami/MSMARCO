@@ -387,7 +387,7 @@ def goInfer(res_dev, df_dev):
 
     failedNo = 0
 
-    for row in df_new.rows:
+    for row in df_new.iterrows():
         score = -0.00001
         q = row['sid']
         if (res_dev.has_key(q)):
