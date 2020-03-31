@@ -313,8 +313,8 @@ def goRun(reader_train, reader_dev, reader_eval):
 
             out = out.data.cpu()
             for i in range(meta_cnt):
-                q = int(features['meta'][i][0])
-                d = int(features['meta'][i][1])
+                q = features['meta'][i][0]
+                d = features['meta'][i][1]
                 if q not in res_dev:
                     res_dev[q] = {}
                 if d not in res_dev[q]:
