@@ -392,10 +392,10 @@ def goInfer(res_dev, df_dev):
         score = -0.00001
         No = index
         q = row['sid']
-        if (res_dev.has_key(q)):
+        if q in res_dev.keys():
             d = row['index']
             dMap = res_dev[q]
-            if (dMap.has_key(d)):
+            if d in dMap.keys():
                 score = dMap[d]
 
         row['score'] = score
