@@ -395,9 +395,9 @@ def goInfer(res_dev, df_dev):
 
     # feNames = ['sid', 'index', 'label', 'query', 'doc']
 
-    allSidDf = len(df_dev.select("sid").distinct())
+    allSidDf = len(df_dev['sid'].unique)
 
-    allDocDf = len(df_dev.select("sid","index").distinct())
+    allDocDf = len(df_dev['sid'])
 
     print_message('df allSidNo size:{}  allItemNo size:{} '.format(allSidDf, allDocDf))
 
