@@ -383,29 +383,39 @@ def goRun(reader_train, reader_dev, reader_eval):
 def goInfer(res_dev, df_dev):
     print_message('Start Inference')
 
-    allSidNo = 0
-    allItemNo = 0
+    df_new = pd.concat([df_dev, pd.DataFrame(columns=list('score'))])
 
-    for k,v in res_dev.items():
-        allSidNo = allSidNo + 1
-        for docID, score in v.items():
-            allItemNo = allItemNo + 1
+    failedNo = 0
 
-    print_message('eval_arr allSidNo size:{}  allItemNo size:{} '.format(allSidNo, allItemNo))
+    for row in df_new.rows:
+        score = -0.00001
+        q = row['sid']
+        if (res_dev.has_key(q)):
+            d = row['index']
+            dMap = res_dev[q]
+            if (dMap.has_key(d)):
+                score = dMap[d]
 
-    # feNames = ['sid', 'index', 'label', 'query', 'doc']
+        row['score'] = score
+        if (row['score'] == -0.00001):
+            failedNo = failedNo + 1
 
-    allSidDf = df_dev.groupby(['sid']).sid.unique()
+    print_message('allNo:{} failedNo:{}'.format(len(df_new),failedNo))
 
-    allDocDf = len(df_dev['sid'])
-
-    print_message('df allSidNo size:{}  allItemNo size:{} '.format(allSidDf, allDocDf))
-
-        # pIndex = 0
-        # for k,v in res_dev.items():
-        #     pIndex = pIndex + 1
-        #     if pIndex < 100:
-        #         print(k,v)
+    # allSidNo = 0
+    # allItemNo = 0
+    #
+    # for k,v in res_dev.items():
+    #     allSidNo = allSidNo + 1
+    #     for docID, score in v.items():
+    #         allItemNo = allItemNo + 1
+    #
+    # print_message('eval_arr allSidNo size:{}  allItemNo size:{} '.format(allSidNo, allItemNo))
+    #
+    # # feNames = ['sid', 'index', 'label', 'query', 'doc']
+    # allSidDf = df_dev.groupby(['sid']).sid.unique()
+    # allDocDf = len(df_dev['sid'])
+    # print_message('df allSidNo size:{}  allItemNo size:{} '.format(allSidDf, allDocDf))
 
     # with open(DATA_FILE_OUT_DEV, mode='w', encoding="utf-8") as f:
     #     for qid, docs in res_dev.items():
