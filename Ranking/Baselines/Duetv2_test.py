@@ -383,13 +383,23 @@ def goRun(reader_train, reader_dev, reader_eval):
 def goInfer(res_dev, df_dev):
     print_message('Start Inference')
 
+    allSidNo = 0
     allItemNo = 0
+
     for k,v in res_dev.items():
-        allItemNo = allItemNo + 1
+        allSidNo = allSidNo + 1
         for docID, score in v.items():
             allItemNo = allItemNo + 1
 
-    print_message('eval_arr size:{} df size:{}'.format(allItemNo, len(df_dev)))
+    print_message('eval_arr allSidNo size:{}  allItemNo size:{} '.format(allSidNo, allItemNo))
+
+    # feNames = ['sid', 'index', 'label', 'query', 'doc']
+
+    allSidDf = len(df_dev.select("sid").distinct())
+
+    allDocDf = len(df_dev.select("sid","index").distinct())
+
+    print_message('df allSidNo size:{}  allItemNo size:{} '.format(allSidDf, allDocDf))
 
         # pIndex = 0
         # for k,v in res_dev.items():
