@@ -472,7 +472,11 @@ def goRun(reader_train, reader_dev, reader_eval):
 def goEval(res_dev, df_dev):
     print_message('Start Inference')
 
-    df_new = pd.concat([df_dev, pd.DataFrame(columns=list('score'))], axis=1)
+    indexR = range(0, len(df_dev))
+
+    a_pd = pd.DataFrame(index = indexR, columns = ['score'])
+
+    df_new = pd.concat([df_dev, a_pd], axis=1)
 
     failedNo = 0
     No = 0
