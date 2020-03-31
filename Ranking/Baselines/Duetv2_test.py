@@ -476,7 +476,7 @@ def goEval(res_dev, df_dev):
 
     a_pd = pd.DataFrame(index = indexR, columns = ['score'])
 
-    df_new = pd.concat([df_dev, a_pd], axis=1)
+    df_new = pd.concat([df_dev, a_pd])
 
     failedNo = 0
     No = 0
