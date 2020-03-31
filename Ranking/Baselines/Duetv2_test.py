@@ -390,7 +390,7 @@ def goInfer(res_dev, df_dev):
 
     for index, row in df_new.iterrows():
         score = -0.00001
-        No = index
+        No = index if index > No else No
         q = row['sid']
         if q in res_dev.keys():
             d = row['index']
