@@ -418,13 +418,13 @@ LEARNING_RATE = 0.001
 DATA_DIR = 'data/'
 
 DATA_FILE_VOCAB = os.path.join(DATA_DIR, "s_vocab.tsv")
-DATA_EMBEDDINGS = os.path.join(DATA_DIR, "q_vec.txt")
+DATA_EMBEDDINGS = os.path.join(DATA_DIR, "ft.vec.txt")
 DATA_FILE_IDFS = os.path.join(DATA_DIR, "s_idf.norm.tsv")
 
-DATA_FILE_TRAIN = os.path.join(DATA_DIR, "s.format.duet_qsample.txt")
+DATA_FILE_TRAIN = os.path.join(DATA_DIR, "train.txt")
 
 
-DATA_FILE_DEV = os.path.join(DATA_DIR, "s_eval.txt")
+DATA_FILE_DEV = os.path.join(DATA_DIR, "eval.txt")
 
 # DATA_FILE_DEV = os.path.join(DATA_DIR, "1w.top1000.dev")
 DATA_FILE_EVAL = os.path.join(DATA_DIR, "1w.top1000.eval")
