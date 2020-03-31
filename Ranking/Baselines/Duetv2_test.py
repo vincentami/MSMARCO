@@ -77,9 +77,9 @@ def adNdcgPrint(df):
 
         if row["sid"] in tmpDict.keys():
             valList = tmpDict[row["sid"]]
-            valList.append([float(row["adRel"]), row['label'], row['index']])
+            valList.append([float(row["score"]), row['label'], row['index']])
         else :
-            tmpDict.update({row["sid"]: [[float(row["adRel"]), row['label'], row['index']]]})
+            tmpDict.update({row["sid"]: [[float(row["score"]), row['label'], row['index']]]})
 
     print_message("adNdcgPrint sid dict count:{}".format(len(tmpDict)))
 
