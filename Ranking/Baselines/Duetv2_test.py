@@ -243,7 +243,7 @@ def goRun(reader_train, reader_dev, reader_eval):
     #     print_message("QRELS_DEV lineNo:" + str(len(qrels)))
     #
 
-    res_dev = [[]]
+    res_dev = {}
     # res_eval = {}
 
     print_message('Starting')
@@ -313,9 +313,13 @@ def goRun(reader_train, reader_dev, reader_eval):
 
             out = out.data.cpu()
             for i in range(meta_cnt):
-                q = features['meta'][i][0]
-                d = features['meta'][i][1]
-                res_dev += [q, d, out[i][0]]
+                q = int(features['meta'][i][0])
+                d = int(features['meta'][i][1])
+                if q not in res_dev:
+                    res_dev[q] = {}
+                if d not in res_dev[q]:
+                    res_dev[q][d] = 0
+                res_dev[q][d] += out[i][0]
 
             is_complete = (meta_cnt < MB_SIZE)
         print_message("eval 1")
@@ -379,8 +383,13 @@ def goRun(reader_train, reader_dev, reader_eval):
 def goInfer(res_dev, df_dev):
     print_message('Start Inference')
 
+    allItemNo = 0
+    for k,v in res_dev.items():
+        allItemNo = allItemNo + 1
+        for docID, score in v.items():
+            allItemNo = allItemNo + 1
 
-    print_message('eval_arr size:{} df size:{}'.format(len(res_dev), len(df_dev)))
+    print_message('eval_arr size:{} df size:{}'.format(allItemNo, len(df_dev)))
 
         # pIndex = 0
         # for k,v in res_dev.items():
