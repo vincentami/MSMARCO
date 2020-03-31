@@ -81,7 +81,7 @@ def adNdcgPrint(df):
         else :
             tmpDict.update({row["sid"]: [[float(row["score"]), row['label'], row['index']]]})
 
-    print_message("adNdcgPrint sid dict count:{}".format(len(tmpDict)))
+    # print_message("adNdcgPrint sid dict count:{}".format(len(tmpDict)))
 
     pIndex = 1
     resDict = {}
