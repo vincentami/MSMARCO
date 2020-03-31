@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="055c8f75-2bf8-4731-869b-31b874047f01" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Ranking/Baselines/Duetv2_test.py" afterPath="$PROJECT_DIR$/Ranking/Baselines/Duetv2_test.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Ranking/Baselines/makeidf_vocab.py" afterPath="$PROJECT_DIR$/Ranking/Baselines/makeidf_vocab.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,21 +23,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="makeidf_vocab.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="makeidf_vocab.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Ranking/Baselines/makeidf_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="455">
-              <caret line="37" column="0" lean-forward="true" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+            <state relative-caret-position="375">
+              <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Duetv2_test.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Duetv2_test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="645">
-              <caret line="438" column="0" lean-forward="true" selection-start-line="438" selection-start-column="0" selection-end-line="438" selection-end-column="0" />
+            <state relative-caret-position="-817">
+              <caret line="224" column="4" lean-forward="false" selection-start-line="224" selection-start-column="4" selection-end-line="224" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -73,10 +72,10 @@
         <option value="$PROJECT_DIR$/Ranking/Baselines/duet2.py" />
         <option value="$PROJECT_DIR$/Ranking/Baselines/Duetv2.py" />
         <option value="$PROJECT_DIR$/Ranking/Baselines/makeidf.py" />
-        <option value="$PROJECT_DIR$/Ranking/Baselines/makeidf_vocab.py" />
         <option value="$PROJECT_DIR$/Ranking/Baselines/make_eval.py" />
         <option value="$PROJECT_DIR$/Ranking/Baselines/Duet.ipynb" />
         <option value="$PROJECT_DIR$/Ranking/Baselines/Duetv2_test.py" />
+        <option value="$PROJECT_DIR$/Ranking/Baselines/makeidf_vocab.py" />
       </list>
     </option>
   </component>
@@ -712,18 +711,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Ranking/Baselines/makeidf_vocab.py">
+    <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="37" column="0" lean-forward="true" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+        <state relative-caret-position="-817">
+          <caret line="224" column="4" lean-forward="false" selection-start-line="224" selection-start-column="4" selection-end-line="224" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2_test.py">
+    <entry file="file://$PROJECT_DIR$/Ranking/Baselines/makeidf_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="645">
-          <caret line="438" column="0" lean-forward="true" selection-start-line="438" selection-start-column="0" selection-end-line="438" selection-end-column="0" />
+        <state relative-caret-position="375">
+          <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding />
         </state>
       </provider>
