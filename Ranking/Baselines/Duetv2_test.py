@@ -8,6 +8,8 @@ import random
 import datetime
 import numpy as np
 import pandas as pd
+import copy
+import math
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
@@ -16,6 +18,93 @@ import torch.optim as optim
 
 def print_message(s):
     print("[{}] {}".format(datetime.datetime.utcnow().strftime("%b %d, %H:%M:%S"), s), flush=True)
+
+
+def getDcg(valuesSeg, level):
+    topIndex = len(valuesSeg)
+    if (topIndex > level):
+        topIndex = level
+
+    dcgV = 0.0
+    for i in range(topIndex):
+        dcgV += (math.pow(2,valuesSeg[i]) - 1)/math.log(i+1+1,2)
+        # print i, valuesSeg[i], dcgV
+
+    return dcgV
+
+def getIdcg(valuesSeg, level):
+    valuesSegNew = copy.deepcopy(valuesSeg)
+
+    valuesSegNew.sort(reverse=True)
+    idcgV = getDcg( valuesSegNew, level)
+
+    return idcgV
+
+def ndcgCal(sDict, level):
+    ndcgDict = {}
+    for k,v in sDict.items():
+        query = k
+        value = v
+        #if (len(value) <= level):
+        if (level > 2):
+            dcg = getDcg(value, level)
+            idcg = getIdcg(value, level)
+
+            # print  dcg/(idcg+1),dcg, idcg, query
+
+            ndcg = dcg/(idcg+0.000001)
+            ndcgDict.update({query: [ndcg, len(value)]})
+
+    return ndcgDict
+
+def calNDCG(level, sDict):
+    indexNo = 0
+    allDcgVale = 0.0
+    ndcg_10 = {}
+    ndcg_10 = ndcgCal(sDict, level)
+    for k,v in ndcg_10.items():
+        allDcgVale = allDcgVale + v[0]
+        indexNo = indexNo + 1
+        # print k,v
+
+    print_message("ndcg@{}  {}, indexNo:{}".format(level, (allDcgVale/indexNo), indexNo))
+
+def adNdcgPrint(df):
+
+    tmpDict = {}
+    for index, row in df.iterrows():
+        # print row["sid"], row["index"], row['label']
+
+        if (tmpDict.has_key(row["sid"])):
+            valList = tmpDict[row["sid"]]
+            valList.append([float(row["adRel"]), row['label'], row['index']])
+        else :
+            tmpDict.update({row["sid"]: [[float(row["adRel"]), row['label'], row['index']]]})
+
+    print_message("adNdcgPrint sid dict count:{}".format(len(tmpDict)))
+
+    pIndex = 1
+    resDict = {}
+    for k,v in tmpDict.items():
+        tmpV = sorted(v, key=lambda x: x[0], reverse=True)
+        # tmpV = sorted(v, key=lambda x: x[0] )
+
+        pIndex = pIndex + 1
+        if(pIndex < 50):
+            print_message("{} {}".format(k,tmpV))
+
+        val = []
+        for i in range(len(tmpV)):
+            val.append(tmpV[i][1])
+
+        resDict.update({k: val})
+
+
+    print_message("adNdcgPrint resDict count :%{}".format(len(resDict)))
+
+    calNDCG(10, resDict)
+
+    calNDCG(5, resDict)
 
 
 class DataReader:
@@ -380,10 +469,10 @@ def goRun(reader_train, reader_dev, reader_eval):
     #
     # return res_dev, res_eval
 
-def goInfer(res_dev, df_dev):
+def goEval(res_dev, df_dev):
     print_message('Start Inference')
 
-    df_new = pd.concat([df_dev, pd.DataFrame(columns=list('score'))])
+    df_new = pd.concat([df_dev, pd.DataFrame(columns=list('score'))], axis=1)
 
     failedNo = 0
     No = 0
@@ -403,6 +492,10 @@ def goInfer(res_dev, df_dev):
             failedNo = failedNo + 1
 
     print_message('allNo:{} failedNo:{}'.format(No,failedNo))
+
+    df_new.sort_values(by=['sid','score'] , ascending=False, inplace=True)
+
+    adNdcgPrint(df_new)
 
     # allSidNo = 0
     # allItemNo = 0
@@ -489,4 +582,4 @@ if __name__ == "__main__":
 
     res_dev = goRun(reader_train, reader_dev, reader_eval)
 
-    goInfer(res_dev, df_dev)
+    goEval(res_dev, df_dev)
