@@ -491,9 +491,9 @@ def goEval(res_dev, df_dev):
         if (row['score'] == -0.00001):
             failedNo = failedNo + 1
 
-    print_message('allNo:{} failedNo:{}'.format(No,failedNo))
+    print_message('allNo:{} failedNo:{}'.format(No, failedNo))
 
-    df_new.sort_values(by=['sid','score'] , ascending=False, inplace=True)
+    df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
 
     adNdcgPrint(df_new)
 
