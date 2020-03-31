@@ -472,8 +472,10 @@ def goRun(reader_train, reader_dev, reader_eval):
 def getScore(sid, index, res_dev):
     score = -0.00001
     if sid in res_dev.keys():
-        print_message("getSocre sid:{} ".format(sid))
         dMap = res_dev[sid]
+
+        print_message("getSocre sid:{} dMap:{} ".format(sid, dMap.keys))
+
         if index in dMap.keys():
             print_message("getScore docID:{} dMapKey:{}".format(index, dMap.keys))
             score = dMap[index]
