@@ -8,7 +8,7 @@ regex_drop_char = re.compile('[^a-z0-9\s]+')
 regex_multi_space = re.compile('\s+')
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         print("Usage: makeidf.py <allTerm_file> <allDev_file>  <allDoc_file>")
         exit(-1)
     else:
