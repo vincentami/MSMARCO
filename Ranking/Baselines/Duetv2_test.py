@@ -485,12 +485,12 @@ def goEval(res_dev, df_dev):
 
     a_pd = pd.DataFrame(index = indexR, columns = ['score'])
 
-    a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'],x['index'], res_dev),axis=1)
+    a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], x['index'], res_dev),axis=1)
 
     df_new = pd.concat([df_dev, a_pd], axis=1)
 
     for index, row in df_new.iterrows():
-        if (index < 10) :
+        if (index < 10 and row['score'] > 0) :
             print_message("sort before index:{} ,row:{}".format(index, row))
 
     # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
