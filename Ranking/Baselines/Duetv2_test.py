@@ -7,6 +7,7 @@ import re
 import random
 import datetime
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
