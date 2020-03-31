@@ -220,7 +220,13 @@ def goInit(data_file_train, data_file_dev, data_file_eval):
 
     print_message('GoInit End')
 
-    return reader_train, reader_dev, reader_eval
+    feNames = ['sid', 'index', 'label', 'query', 'doc']
+
+    df = pd.read_csv(data_file_dev, header=None, sep='\t', names=feNames)
+    df.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
+
+
+    return reader_train, reader_dev, reader_eval, df
 
 def goRun(reader_train, reader_dev, reader_eval):
 
@@ -317,11 +323,13 @@ def goRun(reader_train, reader_dev, reader_eval):
             is_complete = (meta_cnt < MB_SIZE)
         print_message("eval 1")
 
-        pIndex = 0
-        for k,v in res_dev.items():
-            pIndex = pIndex + 1
-            if pIndex < 100:
-                print(k,v)
+        return res_dev
+
+        # pIndex = 0
+        # for k,v in res_dev.items():
+        #     pIndex = pIndex + 1
+        #     if pIndex < 100:
+        #         print(k,v)
 
     #     is_complete = False
     #     reader_eval.reset()
@@ -371,20 +379,35 @@ def goRun(reader_train, reader_dev, reader_eval):
     #
     # return res_dev, res_eval
 
-def goInfer(res_dev, res_eval):
+def goInfer(res_dev, df_dev):
     print_message('Start Inference')
 
-    with open(DATA_FILE_OUT_DEV, mode='w', encoding="utf-8") as f:
-        for qid, docs in res_dev.items():
-            ranked = sorted(docs, key=docs.get, reverse=True)
-            for i in range(min(len(ranked), 10)):
-                f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
+    eval_arr = [[]]
 
-    with open(DATA_FILE_OUT_EVAL, mode='w', encoding="utf-8") as f:
-        for qid, docs in res_eval.items():
-            ranked = sorted(docs, key=docs.get, reverse=True)
-            for i in range(min(len(ranked), 10)):
-                f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
+    for k,v in  res_dev.items():
+        sid = k
+        for docID, score in v.items():
+            eval_arr += [sid, docID, score]
+
+    print_message('eval_arr size:{} df size:{}'.format(len(eval_arr), len(df_dev)))
+
+        # pIndex = 0
+        # for k,v in res_dev.items():
+        #     pIndex = pIndex + 1
+        #     if pIndex < 100:
+        #         print(k,v)
+
+    # with open(DATA_FILE_OUT_DEV, mode='w', encoding="utf-8") as f:
+    #     for qid, docs in res_dev.items():
+    #         ranked = sorted(docs, key=docs.get, reverse=True)
+    #         for i in range(min(len(ranked), 10)):
+    #             f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
+    #
+    # with open(DATA_FILE_OUT_EVAL, mode='w', encoding="utf-8") as f:
+    #     for qid, docs in res_eval.items():
+    #         ranked = sorted(docs, key=docs.get, reverse=True)
+    #         for i in range(min(len(ranked), 10)):
+    #             f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
 
     print_message('Finished Inference')
 
@@ -440,8 +463,8 @@ MODEL_FILE = os.path.join(DATA_DIR, "duet.ens{}.ep{}.dnn")
 
 if __name__ == "__main__":
 
-    reader_train, reader_dev, reader_eval = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
+    reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
 
-    goRun(reader_train, reader_dev, reader_eval)
+    res_dev = goRun(reader_train, reader_dev, reader_eval)
 
-    # goInfer(res_dev, res_eval)
+    goInfer(res_dev, df_dev)
