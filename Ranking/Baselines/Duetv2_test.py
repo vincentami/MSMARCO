@@ -469,6 +469,15 @@ def goRun(reader_train, reader_dev, reader_eval):
     #
     # return res_dev, res_eval
 
+def getScore(sid, index, res_dev):
+    score = -0.00001
+    if sid in res_dev.keys():
+        dMap = res_dev[sid]
+        if d in dMap.keys():
+            score = dMap[d]
+
+    return score
+
 def goEval(res_dev, df_dev):
     print_message('Start Inference')
 
@@ -476,26 +485,9 @@ def goEval(res_dev, df_dev):
 
     a_pd = pd.DataFrame(index = indexR, columns = ['score'])
 
+    a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'],x['index'], res_dev),axis=1)
+
     df_new = pd.concat([df_dev, a_pd], axis=1)
-
-    failedNo = 0
-    No = 0
-
-    for index, row in df_new.iterrows():
-        score = -0.00001
-        No = index if index > No else No
-        q = row['sid']
-        if q in res_dev.keys():
-            d = row['index']
-            dMap = res_dev[q]
-            if d in dMap.keys():
-                score = dMap[d]
-
-        row['score'] = score
-        # if (row['score'] == -0.00001):
-        #     failedNo = failedNo + 1
-
-    print_message('allNo:{} failedNo:{}'.format(No, failedNo))
 
     for index, row in df_new.iterrows():
         if (index < 10) :
