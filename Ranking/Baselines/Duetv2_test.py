@@ -498,7 +498,7 @@ def goEval(res_dev, df_dev):
     print_message('allNo:{} failedNo:{}'.format(No, failedNo))
 
     for index, row in df_new.iterrows():
-        if (index < 10):
+        if (index < 10) :
             print_message("sort before index:{} ,row:{}".format(index, row))
 
     # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
