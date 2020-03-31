@@ -395,7 +395,7 @@ def goInfer(res_dev, df_dev):
 
     # feNames = ['sid', 'index', 'label', 'query', 'doc']
 
-    allSidDf = len(df_dev['sid'].unique)
+    allSidDf = df_dev.groupby(['sid']).sid.unique()
 
     allDocDf = len(df_dev['sid'])
 
