@@ -67,7 +67,7 @@ def calNDCG(level, sDict):
         indexNo = indexNo + 1
         # print k,v
 
-    print_message("ndcg@{}  {}, indexNo:{}".format(level, (allDcgVale/indexNo), indexNo))
+    # print_message("ndcg@{}  {}, indexNo:{}".format(level, (allDcgVale/indexNo), indexNo))
 
 def adNdcgPrint(df):
 
@@ -100,7 +100,7 @@ def adNdcgPrint(df):
         resDict.update({k: val})
 
 
-    print_message("adNdcgPrint resDict count :%{}".format(len(resDict)))
+    # print_message("adNdcgPrint resDict count :%{}".format(len(resDict)))
 
     calNDCG(10, resDict)
 
@@ -497,7 +497,16 @@ def goEval(res_dev, df_dev):
 
     print_message('allNo:{} failedNo:{}'.format(No, failedNo))
 
+    for index, row in df_new.iterrows():
+        if (index < 10):
+            print_message("sort before index:{} ,row:{}".format(index, row))
+
     df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
+
+    for index, row in df_new.iterrows():
+        if (index < 10):
+            print_message("sort after index:{} ,row:{}".format(index, row))
+
 
     adNdcgPrint(df_new)
 
