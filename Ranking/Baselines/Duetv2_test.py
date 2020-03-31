@@ -473,8 +473,8 @@ def getScore(sid, index, res_dev):
     score = -0.00001
     if sid in res_dev.keys():
         dMap = res_dev[sid]
-        if d in dMap.keys():
-            score = dMap[d]
+        if index in dMap.keys():
+            score = dMap[index]
 
     return score
 
