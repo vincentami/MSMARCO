@@ -492,8 +492,8 @@ def goEval(res_dev, df_dev):
                 score = dMap[d]
 
         row['score'] = score
-        if (row['score'] == -0.00001):
-            failedNo = failedNo + 1
+        # if (row['score'] == -0.00001):
+        #     failedNo = failedNo + 1
 
     print_message('allNo:{} failedNo:{}'.format(No, failedNo))
 
