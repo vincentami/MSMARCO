@@ -386,9 +386,11 @@ def goInfer(res_dev, df_dev):
     df_new = pd.concat([df_dev, pd.DataFrame(columns=list('score'))])
 
     failedNo = 0
+    No = 0
 
-    for row in df_new.iterrows():
+    for index, row in df_new.iterrows():
         score = -0.00001
+        No = index
         q = row['sid']
         if (res_dev.has_key(q)):
             d = row['index']
@@ -400,7 +402,7 @@ def goInfer(res_dev, df_dev):
         if (row['score'] == -0.00001):
             failedNo = failedNo + 1
 
-    print_message('allNo:{} failedNo:{}'.format(len(df_new),failedNo))
+    print_message('allNo:{} failedNo:{}'.format(No,failedNo))
 
     # allSidNo = 0
     # allItemNo = 0
