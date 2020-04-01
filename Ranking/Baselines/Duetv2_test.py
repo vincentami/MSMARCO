@@ -431,7 +431,7 @@ def goEval(res_dev, df_dev):
 
     adNdcgPrint(df_new)
 
-    df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
+    # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
     #
     # for index, row in df_new.iterrows():
     #     if (index < 10):
@@ -439,7 +439,7 @@ def goEval(res_dev, df_dev):
     #
     #
 
-    adNdcgPrint(df_new)
+    # adNdcgPrint(df_new)
 
     # with open(DATA_FILE_OUT_DEV, mode='w', encoding="utf-8") as f:
     #     for qid, docs in res_dev.items():

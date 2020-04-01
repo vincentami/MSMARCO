@@ -23,7 +23,7 @@ if __name__ == "__main__":
         with open(sys.argv[2], encoding = 'utf-8', mode='r') as reader:
             for line in reader:
                 cols = line.split('\t')
-                for t in regex_multi_space.sub(' ', regex_drop_char.sub(' ', cols[3].lower() + ' ' + cols[4].lower())).strip().split():
+                for t in regex_multi_space.sub(' ', regex_drop_char.sub(' ', cols[4].lower() + ' ' + cols[5].lower())).strip().split():
                     df[t] = 0
 
         with open(sys.argv[3], encoding = 'utf-8', mode='r') as reader:
