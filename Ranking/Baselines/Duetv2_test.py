@@ -416,7 +416,7 @@ def getScore(sid, index, res_dev):
 def goEval(res_dev, df_dev):
     print_message('Start Inference')
 
-    adNdcgPrint(df_new, 'sid', 'rel', 'label')
+    adNdcgPrint(df_dev, 'sid', 'rel', 'label')
 
     # indexR = range(0, len(df_dev))
     #
