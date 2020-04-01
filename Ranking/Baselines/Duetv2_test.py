@@ -72,12 +72,16 @@ def adNdcgPrint(df, sidKey, scoreKey, labelKey):
     tmpDict = {}
     for index, row in df.iterrows():
         # print row["sid"], row["index"], row['label']
+        vaKey = row[sidKey]
+        vaScore = float(row[scoreKey])
+        vaLabel = row[labelKey]
+        vaIndex = row['index']
 
-        if row[sidKey] in tmpDict:
-            valList = tmpDict[row[sidKey]]
-            valList.append([float(row[scoreKey]), row[labelKey], row['index']])
+        if vaKey in tmpDict:
+            valList = tmpDict[vaKey]
+            valList.append([vaScore, vaLabel, vaIndex])
         else :
-            tmpDict.update({row[sidKey]: [[float(row[scoreKey]), row[labelKey], row['index']]]})
+            tmpDict.update({vaKey: [[vaScore, vaLabel, vaIndex]]})
 
     print_message("adNdcgPrint sid dict count:{}".format(len(tmpDict)))
 
