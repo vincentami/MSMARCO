@@ -492,18 +492,18 @@ def goEval(res_dev, df_dev):
 
     df_new = pd.concat([df_dev, a_pd], axis=1)
 
-    for index, row in df_new.iterrows():
-        if (row['score'] == DEFAULT_VAL ) :
-            print_message("sort before index:{} ,row:{}".format(index, row))
+    # for index, row in df_new.iterrows():
+    #     if (row['score'] == DEFAULT_VAL ) :
+    #         print_message("sort before index:{} ,row:{}".format(index, row))
 
-    # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
+    df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
     #
     # for index, row in df_new.iterrows():
     #     if (index < 10):
     #         print_message("sort after index:{} ,row:{}".format(index, row))
     #
     #
-    # adNdcgPrint(df_new)
+    adNdcgPrint(df_new)
 
     # allSidNo = 0
     # allItemNo = 0
