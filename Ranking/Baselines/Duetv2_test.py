@@ -361,7 +361,8 @@ def goRun(reader_train, reader_dev, reader_eval):
                 loss.backward()
                 optimizer.step()
                 train_loss += loss.item()
-                print_message("EPOCH_SIZE index:" + str(mb_idx))
+                if (mb_idx%10001 == 1):
+                    print_message("EPOCH_SIZE index:" + str(mb_idx))
 
             torch.save(net, MODEL_FILE.format(ens_idx + 1, ep_idx + 1))
             print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
@@ -481,8 +482,8 @@ DROPOUT_RATE = 0.5
 # MB_SIZE = 1024
 # EPOCH_SIZE = 1024
 MB_SIZE = 64
-EPOCH_SIZE = 64
-NUM_EPOCHS = 1
+EPOCH_SIZE = 1500000
+NUM_EPOCHS = 10
 # NUM_ENSEMBLES = 8
 NUM_ENSEMBLES = 1
 LEARNING_RATE = 0.001
