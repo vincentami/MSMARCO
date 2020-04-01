@@ -418,7 +418,8 @@ def goEval(res_dev, df_dev):
 
     adNdcgPrint(df_dev, 'sid', 'rel', 'label')
 
-    df_dev.sort_values(by=['sid', 'index'], ascending=False, inplace=True)
+
+    df_dev.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
 
     adNdcgPrint(df_dev, 'sid', 'index', 'label')
 
@@ -430,6 +431,8 @@ def goEval(res_dev, df_dev):
     a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], str(x['index']), res_dev) , axis=1)
 
     df_new = pd.concat([df_dev, a_pd], axis=1)
+
+    df_new.sort_values(by=['sid', 'index'], ascending=False, inplace=True)
 
     adNdcgPrint(df_new, 'sid', 'score', 'label')
 
