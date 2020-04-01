@@ -477,7 +477,7 @@ def getScore(sid, index, res_dev):
 
         # print_message("getSocre sid:{} index:{} dMap:{} ".format(sid, index, dMap.keys()))
 
-        if str(index) in dMap.keys():
+        if index in dMap.keys():
             print_message("getScore docID:{} dMapKey:{}".format(index, dMap.keys()))
             score = dMap[index]
 
@@ -490,7 +490,7 @@ def goEval(res_dev, df_dev):
 
     a_pd = pd.DataFrame(index = indexR, columns = ['score'])
 
-    a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], x['index'], res_dev),axis=1)
+    a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], str(x['index']), res_dev) , axis=1)
 
     df_new = pd.concat([df_dev, a_pd], axis=1)
 
