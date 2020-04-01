@@ -103,7 +103,7 @@ def adNdcgPrint(df):
 
     calNDCG(10, resDict)
 
-    calNDCG(5, resDict)
+    # calNDCG(5, resDict)
 
 
 class DataReader:
@@ -312,24 +312,12 @@ def goInit(data_file_train, data_file_dev, data_file_eval):
     feNames = ['sid', 'index', 'label', 'query', 'doc']
 
     df = pd.read_csv(data_file_dev, header=None, sep='\t', names=feNames)
-    df.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
-
+    # df.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
 
     return reader_train, reader_dev, reader_eval, df
 
-def goRun(reader_train, reader_dev, reader_eval):
 
-    # qrels = {}
-    # with open(QRELS_DEV, mode='r', encoding="utf-8") as f:
-    #     reader = csv.reader(f, delimiter='\t')
-    #     for row in reader:
-    #         qid = int(row[0])
-    #         did = int(row[2])
-    #         if qid not in qrels:
-    #             qrels[qid] = []
-    #         qrels[qid].append(did)
-    #     print_message("QRELS_DEV lineNo:" + str(len(qrels)))
-    #
+def goRun(reader_train, reader_dev, reader_eval):
 
     res_dev = {}
     # res_eval = {}
@@ -415,60 +403,6 @@ def goRun(reader_train, reader_dev, reader_eval):
 
         return res_dev
 
-        # pIndex = 0
-        # for k,v in res_dev.items():
-        #     pIndex = pIndex + 1
-        #     if pIndex < 100:
-        #         print(k,v)
-
-    #     is_complete = False
-    #     reader_eval.reset()
-    #     net.eval()
-    #     loop_cnt=0
-    #     while not is_complete:
-    #         features = reader_eval.get_minibatch()
-    #         loop_cnt = loop_cnt + 1
-    #         if ARCH_TYPE == 0:
-    #             out = net(torch.from_numpy(features['local'][0]).to(DEVICE), None, None)
-    #         elif ARCH_TYPE == 1:
-    #             out = net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
-    #                       torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(DEVICE),
-    #                                        torch.from_numpy(features['mask_d'][0]).to(DEVICE)).to(DEVICE))
-    #         else:
-    #             out = net(torch.from_numpy(features['local'][0]).to(DEVICE),
-    #                       torch.from_numpy(features['dist_q']).to(DEVICE),
-    #                       torch.from_numpy(features['dist_d'][0]).to(DEVICE),
-    #                       torch.from_numpy(features['mask_q']).to(DEVICE),
-    #                       torch.from_numpy(features['mask_d'][0]).to(DEVICE))
-    #         meta_cnt = len(features['meta'])
-    #
-    #         print_message("eval  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
-    #
-    #         out = out.data.cpu()
-    #         for i in range(meta_cnt):
-    #             q = int(features['meta'][i][0])
-    #             d = int(features['meta'][i][1])
-    #             if q not in res_eval:
-    #                 res_eval[q] = {}
-    #             if d not in res_eval[q]:
-    #                 res_eval[q][d] = 0
-    #             res_eval[q][d] += out[i][0]
-    #         is_complete = (meta_cnt < MB_SIZE)
-    #
-    #     print_message("eval 2")
-    #
-    #     mrr = 0
-    #     for qid, docs in res_dev.items():
-    #         ranked = sorted(docs, key=docs.get, reverse=True)
-    #         for i in range(min(len(ranked), 10)):
-    #             if ranked[i] in qrels[qid]:
-    #                 mrr += 1 / (i + 1)
-    #                 break
-    #     mrr /= len(qrels)
-    #     print_message('model:{}, mrr:{}'.format(ens_idx + 1, mrr))
-    #
-    # return res_dev, res_eval
-
 def getScore(sid, index, res_dev):
     score = DEFAULT_VAL
     if sid in res_dev.keys():
@@ -495,6 +429,8 @@ def goEval(res_dev, df_dev):
     #     if (row['score'] == DEFAULT_VAL ) :
     #         print_message("sort before index:{} ,row:{}".format(index, row))
 
+    adNdcgPrint(df_new)
+
     df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
     #
     # for index, row in df_new.iterrows():
@@ -502,22 +438,8 @@ def goEval(res_dev, df_dev):
     #         print_message("sort after index:{} ,row:{}".format(index, row))
     #
     #
-    adNdcgPrint(df_new)
 
-    # allSidNo = 0
-    # allItemNo = 0
-    #
-    # for k,v in res_dev.items():
-    #     allSidNo = allSidNo + 1
-    #     for docID, score in v.items():
-    #         allItemNo = allItemNo + 1
-    #
-    # print_message('eval_arr allSidNo size:{}  allItemNo size:{} '.format(allSidNo, allItemNo))
-    #
-    # # feNames = ['sid', 'index', 'label', 'query', 'doc']
-    # allSidDf = df_dev.groupby(['sid']).sid.unique()
-    # allDocDf = len(df_dev['sid'])
-    # print_message('df allSidNo size:{}  allItemNo size:{} '.format(allSidDf, allDocDf))
+    adNdcgPrint(df_new)
 
     # with open(DATA_FILE_OUT_DEV, mode='w', encoding="utf-8") as f:
     #     for qid, docs in res_dev.items():
