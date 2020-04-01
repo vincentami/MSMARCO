@@ -45,8 +45,7 @@ def ndcgCal(sDict, level):
     for k,v in sDict.items():
         query = k
         value = v
-        #if (len(value) <= level):
-        if (level > 2):
+        if (level >= 1):
             dcg = getDcg(value, level)
             idcg = getIdcg(value, level)
 
@@ -68,17 +67,17 @@ def calNDCG(level, sDict):
 
     print_message("ndcg@{}  {}, indexNo:{}".format(level, (allDcgVale/indexNo), indexNo))
 
-def adNdcgPrint(df):
+def adNdcgPrint(df, sidKey, scoreKey, labelKey):
 
     tmpDict = {}
     for index, row in df.iterrows():
         # print row["sid"], row["index"], row['label']
 
-        if row["sid"] in tmpDict.keys():
-            valList = tmpDict[row["sid"]]
-            valList.append([float(row["score"]), row['label'], row['index']])
+        if row[sidKey] in tmpDict.keys():
+            valList = tmpDict[row[sidKey]]
+            valList.append([float(row[scoreKey]), row[labelKey], row['index']])
         else :
-            tmpDict.update({row["sid"]: [[float(row["score"]), row['label'], row['index']]]})
+            tmpDict.update({row[sidKey]: [[float(row[scoreKey]), row[labelKey], row['index']]]})
 
     # print_message("adNdcgPrint sid dict count:{}".format(len(tmpDict)))
 
@@ -304,15 +303,15 @@ def goInit(data_file_train, data_file_dev, data_file_eval):
     print_message('GoInit Start')
 
     reader_train = DataReader(data_file_train, 0, True)
-    reader_dev = DataReader(data_file_dev, 3, False)
+    reader_dev = DataReader(data_file_dev, 4, False)
     reader_eval = DataReader(data_file_eval, 2, False)
 
     print_message('GoInit End')
 
-    feNames = ['sid', 'index', 'label', 'query', 'doc']
+    feNames = ['sid', 'index', 'rel', 'label', 'query', 'doc']
 
     df = pd.read_csv(data_file_dev, header=None, sep='\t', names=feNames)
-    # df.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
+    df.sort_values(by=['sid', 'rel'], ascending=True, inplace=True)
 
     return reader_train, reader_dev, reader_eval, df
 
@@ -417,19 +416,17 @@ def getScore(sid, index, res_dev):
 def goEval(res_dev, df_dev):
     print_message('Start Inference')
 
-    indexR = range(0, len(df_dev))
+    adNdcgPrint(df_new, 'sid', 'rel', 'label')
 
-    a_pd = pd.DataFrame(index = indexR, columns = ['score'])
-
-    a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], str(x['index']), res_dev) , axis=1)
-
-    df_new = pd.concat([df_dev, a_pd], axis=1)
-
-    # for index, row in df_new.iterrows():
-    #     if (row['score'] == DEFAULT_VAL ) :
-    #         print_message("sort before index:{} ,row:{}".format(index, row))
-
-    adNdcgPrint(df_new)
+    # indexR = range(0, len(df_dev))
+    #
+    # a_pd = pd.DataFrame(index = indexR, columns = ['score'])
+    #
+    # a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], str(x['index']), res_dev) , axis=1)
+    #
+    # df_new = pd.concat([df_dev, a_pd], axis=1)
+    #
+    # adNdcgPrint(df_new)
 
     # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
     #
