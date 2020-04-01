@@ -102,7 +102,7 @@ def adNdcgPrint(df, sidKey, scoreKey, labelKey):
 
     calNDCG(10, resDict)
 
-    # calNDCG(5, resDict)
+    calNDCG(5, resDict)
 
 
 class DataReader:
