@@ -475,9 +475,9 @@ def getScore(sid, index, res_dev):
     if sid in res_dev.keys():
         dMap = res_dev[sid]
 
-        print_message("getSocre sid:{} index:{} dMap:{} ".format(sid, index, dMap.keys()))
+        # print_message("getSocre sid:{} index:{} dMap:{} ".format(sid, index, dMap.keys()))
 
-        if index in dMap.keys():
+        if str(index) in dMap.keys():
             print_message("getScore docID:{} dMapKey:{}".format(index, dMap.keys()))
             score = dMap[index]
 
