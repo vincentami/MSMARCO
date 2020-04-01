@@ -45,7 +45,7 @@ def ndcgCal(sDict, level):
     for k,v in sDict.items():
         query = k
         value = v
-        if (level >= 1):
+        if (level > 1):
             dcg = getDcg(value, level)
             idcg = getIdcg(value, level)
 
@@ -79,7 +79,7 @@ def adNdcgPrint(df, sidKey, scoreKey, labelKey):
         else :
             tmpDict.update({row[sidKey]: [[float(row[scoreKey]), row[labelKey], row['index']]]})
 
-    # print_message("adNdcgPrint sid dict count:{}".format(len(tmpDict)))
+    print_message("adNdcgPrint sid dict count:{}".format(len(tmpDict)))
 
     pIndex = 1
     resDict = {}
@@ -88,7 +88,7 @@ def adNdcgPrint(df, sidKey, scoreKey, labelKey):
         # tmpV = sorted(v, key=lambda x: x[0] )
 
         pIndex = pIndex + 1
-        if(pIndex < 50):
+        if(pIndex < 2):
             print_message("{} {}".format(k,tmpV))
 
         val = []
@@ -417,6 +417,10 @@ def goEval(res_dev, df_dev):
     print_message('Start Inference')
 
     adNdcgPrint(df_dev, 'sid', 'rel', 'label')
+
+    df_dev.sort_values(by=['sid', 'index'], ascending=False, inplace=True)
+
+    adNdcgPrint(df_dev, 'sid', 'index', 'label')
 
     # indexR = range(0, len(df_dev))
     #
