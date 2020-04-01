@@ -73,7 +73,7 @@ def adNdcgPrint(df, sidKey, scoreKey, labelKey):
     for index, row in df.iterrows():
         # print row["sid"], row["index"], row['label']
 
-        if row[sidKey] in tmpDict.keys():
+        if row[sidKey] in tmpDict:
             valList = tmpDict[row[sidKey]]
             valList.append([float(row[scoreKey]), row[labelKey], row['index']])
         else :
