@@ -416,24 +416,20 @@ def getScore(sid, index, res_dev):
 def goEval(res_dev, df_dev):
     print_message('Start Inference')
 
-    adNdcgPrint(df_dev, 'sid', 'rel', 'label')
+    df_rel = df_dev.__deepcopy__()
+    adNdcgPrint(df_rel, 'sid', 'rel', 'label')
 
-
-    df_dev.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
-
-    adNdcgPrint(df_dev, 'sid', 'index', 'label')
+    df_org = df_dev.__deepcopy__()
+    df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
+    adNdcgPrint(df_org, 'sid', 'index', 'label')
 
 
     indexR = range(0, len(df_dev))
-
     a_pd = pd.DataFrame(index = indexR, columns = ['score'])
-
     a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], str(x['index']), res_dev) , axis=1)
-
     df_new = pd.concat([df_dev, a_pd], axis=1)
 
-    df_new.sort_values(by=['sid', 'index'], ascending=False, inplace=True)
-
+    df_new.sort_values(by=['sid', 'score'], ascending=False, inplace=True)
     adNdcgPrint(df_new, 'sid', 'score', 'label')
 
     # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
