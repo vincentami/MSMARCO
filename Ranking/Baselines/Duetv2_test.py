@@ -60,14 +60,13 @@ def ndcgCal(sDict, level):
 def calNDCG(level, sDict):
     indexNo = 0
     allDcgVale = 0.0
-    ndcg_10 = {}
     ndcg_10 = ndcgCal(sDict, level)
     for k,v in ndcg_10.items():
         allDcgVale = allDcgVale + v[0]
         indexNo = indexNo + 1
         # print k,v
 
-    # print_message("ndcg@{}  {}, indexNo:{}".format(level, (allDcgVale/indexNo), indexNo))
+    print_message("ndcg@{}  {}, indexNo:{}".format(level, (allDcgVale/indexNo), indexNo))
 
 def adNdcgPrint(df):
 
