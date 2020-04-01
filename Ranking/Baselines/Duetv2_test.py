@@ -471,15 +471,13 @@ def goRun(reader_train, reader_dev, reader_eval):
     # return res_dev, res_eval
 
 def getScore(sid, index, res_dev):
-    score = -0.00001
+    score = DEFAULT_VAL
     if sid in res_dev.keys():
         dMap = res_dev[sid]
 
         # print_message("getSocre sid:{} index:{} dMap:{} ".format(sid, index, dMap.keys()))
-
         if index in dMap.keys():
-            print_message("getScore docID:{} dMapKey:{}".format(index, dMap.keys()))
-            score = dMap[index]
+            score = float(dMap[index])
 
     return score
 
@@ -495,7 +493,7 @@ def goEval(res_dev, df_dev):
     df_new = pd.concat([df_dev, a_pd], axis=1)
 
     for index, row in df_new.iterrows():
-        if (index < 10 and row['score'] > 0) :
+        if (row['score'] == DEFAULT_VAL ) :
             print_message("sort before index:{} ,row:{}".format(index, row))
 
     # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
@@ -562,6 +560,8 @@ NUM_EPOCHS = 1
 # NUM_ENSEMBLES = 8
 NUM_ENSEMBLES = 1
 LEARNING_RATE = 0.001
+
+DEFAULT_VAL = -0.00001
 
 DATA_DIR = 'data/'
 
