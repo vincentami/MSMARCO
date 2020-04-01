@@ -479,7 +479,7 @@ def getScore(sid, index, res_dev):
 
         if index in dMap.keys():
             print_message("getScore docID:{} dMapKey:{}".format(index, dMap.keys()))
-            score = float(dMap[index])
+            score = dMap[index]
 
     return score
 
