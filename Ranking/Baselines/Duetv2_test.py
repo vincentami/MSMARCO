@@ -361,6 +361,7 @@ def goRun(device, reader_train, reader_dev, reader_eval):
                 loss.backward()
                 optimizer.step()
                 train_loss += loss.item()
+
                 if (mb_idx%10001 == 1):
                     print_message("EPOCH_SIZE index:" + str(mb_idx))
 
@@ -495,8 +496,8 @@ VOCAB_SIZE = 0
 DROPOUT_RATE = 0.5
 # MB_SIZE = 1024
 # EPOCH_SIZE = 1024
-MB_SIZE = 64
-EPOCH_SIZE = 1500000
+MB_SIZE = 1024
+EPOCH_SIZE = 25600
 NUM_EPOCHS = 1
 # NUM_ENSEMBLES = 8
 NUM_ENSEMBLES = 1
