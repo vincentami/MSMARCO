@@ -426,9 +426,9 @@ def goEval(res_dev, df_dev):
     df_rel = df_dev.__deepcopy__()
     adNdcgPrint(df_rel, 'sid', 'rel', 'label')
 
-    # df_org = df_dev.__deepcopy__()
-    # df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
-    # adNdcgPrint(df_org, 'sid', 'index', 'label')
+    df_org = df_dev.__deepcopy__()
+    df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
+    adNdcgPrint(df_org, 'sid', 'index', 'label')
 
     indexR = range(0, len(df_dev))
     a_pd = pd.DataFrame(index = indexR, columns = ['score'])
