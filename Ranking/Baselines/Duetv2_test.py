@@ -320,7 +320,7 @@ def goInit(data_file_train, data_file_dev, data_file_eval):
     return reader_train, reader_dev, reader_eval, df
 
 
-def goRun(device, reader_train, reader_dev, reader_eval):
+def goRun(device, reader_train, reader_dev, reader_eval, ts):
 
     res_dev = {}
     # res_eval = {}
@@ -362,10 +362,10 @@ def goRun(device, reader_train, reader_dev, reader_eval):
                 optimizer.step()
                 train_loss += loss.item()
 
-                if (mb_idx%10001 == 1):
-                    print_message("EPOCH_SIZE index:" + str(mb_idx))
+                if (mb_idx%1001 == 1):
+                    print_message("EPOCH_SIZE index:{} train_loss:{}".format(mb_idx, train_loss/(mb_idx+1)))
 
-            torch.save(net, MODEL_FILE.format(ens_idx + 1, ep_idx + 1))
+            torch.save(net, MODEL_FILE.format(ens_idx + 1, ep_idx + 1,ts))
             print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
 
 
@@ -475,9 +475,10 @@ def goEnvInit():
 
         print_message('Init device on cpu:all')
 
+    ts = datetime.datetime.utcnow().strftime("%b %d, %H:%M:%S")
     print_message('Finished goEnvInit')
 
-    return device
+    return device, ts
 
 
 # device = torch.device("cpu")  # torch.device("cpu"), if you want to run on CPU instead
@@ -525,16 +526,16 @@ DATA_FILE_EVAL = os.path.join(DATA_DIR, "1w.top1000.eval")
 # DATA_FILE_OUT_DEV = os.path.join(DATA_DIR, "s.output.dev.tsv")
 # DATA_FILE_OUT_EVAL = os.path.join(DATA_DIR, "s.output.eval.tsv")
 
-MODEL_FILE = os.path.join(DATA_DIR, "duet.ens{}.ep{}.dnn")
+MODEL_FILE = os.path.join(DATA_DIR, "duet.ens{}.ep{}.dnn.{}")
 
 
 if __name__ == "__main__":
 
     # os.environ["CUDA_VISIBLE_deviceS"] = "0,1,2,3"
-    device = goEnvInit()
+    device, ts = goEnvInit()
 
     reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
 
-    res_dev = goRun(device, reader_train, reader_dev, reader_eval)
+    res_dev = goRun(device, reader_train, reader_dev, reader_eval, ts)
 
     goEval(res_dev, df_dev)
