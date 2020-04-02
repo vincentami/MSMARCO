@@ -285,7 +285,7 @@ class Duet(torch.nn.Module):
                                        nn.Dropout(p=DROPOUT_RATE),
                                        nn.Linear(NUM_HIDDEN_NODES, 1),
                                        nn.ReLU())
-        self.scale = torch.tensor([0.1], requires_grad=False).to(DEVICE)
+        self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
     def forward(self, x_local, x_dist_q, x_dist_d, x_mask_q, x_mask_d):
         if ARCH_TYPE != 1:
@@ -320,7 +320,7 @@ def goInit(data_file_train, data_file_dev, data_file_eval):
     return reader_train, reader_dev, reader_eval, df
 
 
-def goRun(DEVICE, reader_train, reader_dev, reader_eval):
+def goRun(device, reader_train, reader_dev, reader_eval):
 
     res_dev = {}
     # res_eval = {}
@@ -330,7 +330,7 @@ def goRun(DEVICE, reader_train, reader_dev, reader_eval):
     for ens_idx in range(NUM_ENSEMBLES):
         torch.manual_seed(ens_idx + 1)
         net = Duet(reader_train)
-        net = net.to(DEVICE)
+        net = net.to(device)
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(net.parameters(), lr=LEARNING_RATE)
         print_message('Number of learnable parameters: {}'.format(net.parameter_count()))
@@ -341,22 +341,22 @@ def goRun(DEVICE, reader_train, reader_dev, reader_eval):
             for mb_idx in range(EPOCH_SIZE):
                 features = reader_train.get_minibatch()
                 if ARCH_TYPE == 0:
-                    out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(DEVICE), None, None) for i in
+                    out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(device), None, None) for i in
                                            range(reader_train.num_docs)]), 1)
                 elif ARCH_TYPE == 1:
-                    out = torch.cat(tuple([net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
-                                               torch.from_numpy(features['dist_d'][i]).to(DEVICE),
-                                               torch.from_numpy(features['mask_q']).to(DEVICE),
-                                               torch.from_numpy(features['mask_d'][i]).to(DEVICE)) for i in
+                    out = torch.cat(tuple([net(None, torch.from_numpy(features['dist_q']).to(device),
+                                               torch.from_numpy(features['dist_d'][i]).to(device),
+                                               torch.from_numpy(features['mask_q']).to(device),
+                                               torch.from_numpy(features['mask_d'][i]).to(device)) for i in
                                            range(reader_train.num_docs)]), 1)
                 else:
-                    out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(DEVICE),
-                                               torch.from_numpy(features['dist_q']).to(DEVICE),
-                                               torch.from_numpy(features['dist_d'][i]).to(DEVICE),
-                                               torch.from_numpy(features['mask_q']).to(DEVICE),
-                                               torch.from_numpy(features['mask_d'][i]).to(DEVICE)) for i in
+                    out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(device),
+                                               torch.from_numpy(features['dist_q']).to(device),
+                                               torch.from_numpy(features['dist_d'][i]).to(device),
+                                               torch.from_numpy(features['mask_q']).to(device),
+                                               torch.from_numpy(features['mask_d'][i]).to(device)) for i in
                                            range(reader_train.num_docs)]), 1)
-                loss = criterion(out, torch.from_numpy(features['labels']).to(DEVICE))
+                loss = criterion(out, torch.from_numpy(features['labels']).to(device))
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
@@ -376,17 +376,17 @@ def goRun(DEVICE, reader_train, reader_dev, reader_eval):
             features = reader_dev.get_minibatch()
             loop_cnt = loop_cnt + 1
             if ARCH_TYPE == 0:
-                out = net(torch.from_numpy(features['local'][0]).to(DEVICE), None, None)
+                out = net(torch.from_numpy(features['local'][0]).to(device), None, None)
             elif ARCH_TYPE == 1:
-                out = net(None, torch.from_numpy(features['dist_q']).to(DEVICE),
-                          torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(DEVICE),
-                                           torch.from_numpy(features['mask_d'][0]).to(DEVICE)).to(DEVICE))
+                out = net(None, torch.from_numpy(features['dist_q']).to(device),
+                          torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(device),
+                                           torch.from_numpy(features['mask_d'][0]).to(device)).to(device))
             else:
-                out = net(torch.from_numpy(features['local'][0]).to(DEVICE),
-                          torch.from_numpy(features['dist_q']).to(DEVICE),
-                          torch.from_numpy(features['dist_d'][0]).to(DEVICE),
-                          torch.from_numpy(features['mask_q']).to(DEVICE),
-                          torch.from_numpy(features['mask_d'][0]).to(DEVICE))
+                out = net(torch.from_numpy(features['local'][0]).to(device),
+                          torch.from_numpy(features['dist_q']).to(device),
+                          torch.from_numpy(features['dist_d'][0]).to(device),
+                          torch.from_numpy(features['mask_q']).to(device),
+                          torch.from_numpy(features['mask_d'][0]).to(device))
             meta_cnt = len(features['meta'])
 
             if (loop_cnt %(10001) == 1):
@@ -466,20 +466,20 @@ def goEnvInit():
     print_message('Start goEnvInit')
 
     if torch.cuda.is_available():
-        DEVICE = torch.device("cuda:1")
+        device = torch.device("cuda:1")
 
         print_message('Init device on cuda:1')
     else :
-        DEVICE = torch.device("cpu")
+        device = torch.device("cpu")
 
         print_message('Init device on cpu:all')
 
     print_message('Finished goEnvInit')
 
-    return DEVICE
+    return device
 
 
-# DEVICE = torch.device("cpu")  # torch.device("cpu"), if you want to run on CPU instead
+# device = torch.device("cpu")  # torch.device("cpu"), if you want to run on CPU instead
 ARCH_TYPE = 2
 MAX_QUERY_TERMS = 20
 MAX_DOC_TERMS = 200
@@ -529,7 +529,7 @@ MODEL_FILE = os.path.join(DATA_DIR, "duet.ens{}.ep{}.dnn")
 
 if __name__ == "__main__":
 
-    # os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+    # os.environ["CUDA_VISIBLE_deviceS"] = "0,1,2,3"
     device = goEnvInit()
 
     reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
