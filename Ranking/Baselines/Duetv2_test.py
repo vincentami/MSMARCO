@@ -320,7 +320,7 @@ def goInit(data_file_train, data_file_dev, data_file_eval):
     return reader_train, reader_dev, reader_eval, df
 
 
-def goRun(reader_train, reader_dev, reader_eval):
+def goRun(DEVICE, reader_train, reader_dev, reader_eval):
 
     res_dev = {}
     # res_eval = {}
@@ -476,7 +476,10 @@ def goEnvInit():
 
     print_message('Finished goEnvInit')
 
-DEVICE = torch.device("cpu")  # torch.device("cpu"), if you want to run on CPU instead
+    return DEVICE
+
+
+# DEVICE = torch.device("cpu")  # torch.device("cpu"), if you want to run on CPU instead
 ARCH_TYPE = 2
 MAX_QUERY_TERMS = 20
 MAX_DOC_TERMS = 200
@@ -527,10 +530,10 @@ MODEL_FILE = os.path.join(DATA_DIR, "duet.ens{}.ep{}.dnn")
 if __name__ == "__main__":
 
     # os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
-    goEnvInit()
+    device = goEnvInit()
 
     reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
 
-    res_dev = goRun(reader_train, reader_dev, reader_eval)
+    res_dev = goRun(device, reader_train, reader_dev, reader_eval)
 
     goEval(res_dev, df_dev)
