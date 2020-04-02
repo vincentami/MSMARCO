@@ -423,13 +423,12 @@ def getScore(sid, index, res_dev):
 def goEval(res_dev, df_dev):
     print_message('Start Inference')
 
-    # df_rel = df_dev.__deepcopy__()
-    # adNdcgPrint(df_rel, 'sid', 'rel', 'label')
-    #
+    df_rel = df_dev.__deepcopy__()
+    adNdcgPrint(df_rel, 'sid', 'rel', 'label')
+
     # df_org = df_dev.__deepcopy__()
     # df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
     # adNdcgPrint(df_org, 'sid', 'index', 'label')
-
 
     indexR = range(0, len(df_dev))
     a_pd = pd.DataFrame(index = indexR, columns = ['score'])
@@ -504,7 +503,7 @@ DROPOUT_RATE = 0.5
 # EPOCH_SIZE = 25600
 
 MB_SIZE = 1024
-EPOCH_SIZE = 256
+EPOCH_SIZE = 1024
 
 NUM_EPOCHS = 1
 # NUM_ENSEMBLES = 8
