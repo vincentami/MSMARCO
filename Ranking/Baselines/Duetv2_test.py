@@ -241,8 +241,8 @@ class Flatten(nn.Module):
         return x.contiguous().view(x.size(0), -1)
 
 
-class Duet(torch.nn.Module, device):
-    def __init__(self, READER_TRAIsN):
+class Duet(torch.nn.Module):
+    def __init__(self, READER_TRAIN, device):
         super(Duet, self).__init__()
         self.embed = nn.Embedding(VOCAB_SIZE, NUM_HIDDEN_NODES)
         self.embed.weight = nn.Parameter(READER_TRAIN.pre_trained_embeddings, requires_grad=True)
