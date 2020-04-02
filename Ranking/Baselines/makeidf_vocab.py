@@ -7,7 +7,7 @@ MAX_DOC_TERMS = 400
 regex_drop_char = re.compile('[^a-z0-9\s]+')
 regex_multi_space = re.compile('\s+')
 
-IDF_DEFAULT=1
+IDF_DEFAULT=0
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
@@ -45,12 +45,13 @@ if __name__ == "__main__":
             for k, v in df.items():
                 writer.write('{}\t{}\n'.format(k, math.log(n / v) if v > 0 else 0))
 
-        n = 0
-        with open(sys.argv[2], encoding = 'utf-8', mode='r') as reader:
-            for line in reader:
-                n += 2
+        # n = 0
+        # with open(sys.argv[2], encoding = 'utf-8', mode='r') as reader:
+        #     for line in reader:
+        #         n += 5
+        # denom = math.log(n)
 
-        denom = math.log(n)
+        denom = 1000
         with open('s_idf.tsv', encoding = 'utf-8', mode='r') as reader:
             with open('s_idf.norm.tsv', encoding = 'utf-8', mode='w') as writer:
                 for line in reader:
@@ -58,6 +59,8 @@ if __name__ == "__main__":
                     score = float(cols[1])
                     if score > 0:
                         writer.write('{}\t{}\n'.format(cols[0], score / denom))
+                    else:
+                        writer.write('{}\t{}\n'.format(cols[0], 0))
 
         with open('s_vocab.tsv',  encoding = 'utf-8', mode='w' ) as writer:
             index = 1
