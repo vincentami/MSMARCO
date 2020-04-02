@@ -465,7 +465,7 @@ def goEval(res_dev, df_dev):
 
 
 
-DEVICE = torch.device("cuda:0,1,2,3")  # torch.device("cpu"), if you want to run on CPU instead
+DEVICE = torch.device("cuda:0")  # torch.device("cpu"), if you want to run on CPU instead
 ARCH_TYPE = 2
 MAX_QUERY_TERMS = 20
 MAX_DOC_TERMS = 200
@@ -515,7 +515,7 @@ MODEL_FILE = os.path.join(DATA_DIR, "duet.ens{}.ep{}.dnn")
 
 if __name__ == "__main__":
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+    # os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
 
     reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
 
