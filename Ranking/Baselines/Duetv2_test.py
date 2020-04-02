@@ -363,7 +363,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts):
                 mini_loss = loss.item()
                 train_loss += mini_loss
 
-                if (mb_idx%11 == 1):
+                if (mb_idx%101 == 1):
                     print_message("EPOCH_SIZE index:{} train_loss:{} loss_mini:{}".format(mb_idx, train_loss/(mb_idx+1), mini_loss))
 
             torch.save(net, MODEL_FILE.format(ens_idx + 1, ep_idx + 1,ts))
@@ -503,7 +503,7 @@ DROPOUT_RATE = 0.5
 # MB_SIZE = 1024
 # EPOCH_SIZE = 25600
 
-MB_SIZE = 64
+MB_SIZE = 1024
 EPOCH_SIZE = 256
 
 NUM_EPOCHS = 1
