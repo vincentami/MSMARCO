@@ -476,7 +476,7 @@ def goEnvInit():
 
     print_message('Finished goEnvInit')
 
-DEVICE = torch.device("cuda:0")  # torch.device("cpu"), if you want to run on CPU instead
+DEVICE = torch.device("cpu")  # torch.device("cpu"), if you want to run on CPU instead
 ARCH_TYPE = 2
 MAX_QUERY_TERMS = 20
 MAX_DOC_TERMS = 200
