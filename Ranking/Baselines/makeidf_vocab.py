@@ -48,7 +48,7 @@ if __name__ == "__main__":
         n = 0
         with open(sys.argv[2], encoding = 'utf-8', mode='r') as reader:
             for line in reader:
-                n += 1
+                n += 2
 
         denom = math.log(n)
         with open('s_idf.tsv', encoding = 'utf-8', mode='r') as reader:
