@@ -462,8 +462,19 @@ def goEval(res_dev, df_dev):
     print_message('Finished Inference')
 
 
+def goEnvInit():
+    print_message('Start goEnvInit')
 
+    if torch.cuda.is_available():
+        DEVICE = torch.device("cuda:0")
 
+        print_message('Init device on cuda:0')
+    else :
+        DEVICE = torch.device("cpu")
+
+        print_message('Init device on cpu:all')
+
+    print_message('Finished goEnvInit')
 
 DEVICE = torch.device("cuda:0")  # torch.device("cpu"), if you want to run on CPU instead
 ARCH_TYPE = 2
@@ -516,6 +527,7 @@ MODEL_FILE = os.path.join(DATA_DIR, "duet.ens{}.ep{}.dnn")
 if __name__ == "__main__":
 
     # os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+    goEnvInit()
 
     reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
 

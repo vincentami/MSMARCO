@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="055c8f75-2bf8-4731-869b-31b874047f01" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Ranking/Baselines/Duetv2_test.py" afterPath="$PROJECT_DIR$/Ranking/Baselines/Duetv2_test.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,8 +26,8 @@
       <file leaf-file-name="Duetv2_test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="257">
-              <caret line="468" column="13" lean-forward="true" selection-start-line="468" selection-start-column="13" selection-end-line="468" selection-end-column="13" />
+            <state relative-caret-position="450">
+              <caret line="529" column="15" lean-forward="true" selection-start-line="529" selection-start-column="15" selection-end-line="529" selection-end-column="15" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -726,8 +725,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="257">
-          <caret line="468" column="13" lean-forward="true" selection-start-line="468" selection-start-column="13" selection-end-line="468" selection-end-column="13" />
+        <state relative-caret-position="450">
+          <caret line="529" column="15" lean-forward="true" selection-start-line="529" selection-start-column="15" selection-end-line="529" selection-end-column="15" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
