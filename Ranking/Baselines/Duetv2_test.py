@@ -360,10 +360,11 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts):
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
-                train_loss += loss.item()
+                mini_loss = loss.item()
+                train_loss += mini_loss
 
                 if (mb_idx%11 == 1):
-                    print_message("EPOCH_SIZE index:{} train_loss:{}".format(mb_idx, train_loss/(mb_idx+1)))
+                    print_message("EPOCH_SIZE index:{} train_loss:{} loss_mini:{}".format(mb_idx, train_loss/(mb_idx+1), mini_loss))
 
             torch.save(net, MODEL_FILE.format(ens_idx + 1, ep_idx + 1,ts))
             print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
