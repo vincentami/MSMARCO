@@ -9,7 +9,7 @@ regex_multi_space = re.compile('\s+')
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
-        print("Usage: makeidf.py <allTerm_file> <allDev_file>  <allDoc_file>")
+        print("Usage: makeidf.py <allTerm_file>  <allDev_file>  <allTrain_file>  <allIDF_file>")
         exit(-1)
     else:
         df = {}
@@ -29,6 +29,12 @@ if __name__ == "__main__":
         with open(sys.argv[3], encoding = 'utf-8', mode='r') as reader:
             for line in reader:
                 cols = line.split('\t')
+                for t in regex_multi_space.sub(' ', regex_drop_char.sub(' ', cols[2].lower() )).strip().split():
+                    df[t] = 0
+
+        with open(sys.argv[4], encoding = 'utf-8', mode='r') as reader:
+            for line in reader:
+                cols = line.split('\t')
                 for t in set(regex_multi_space.sub(' ', regex_drop_char.sub(' ', cols[0].lower())).strip().split()):
                     if t in df:
                         df[t] += 1
@@ -38,7 +44,7 @@ if __name__ == "__main__":
                 writer.write('{}\t{}\n'.format(k, math.log(n / v) if v > 0 else 0))
 
         n = 0
-        with open(sys.argv[3], encoding = 'utf-8', mode='r') as reader:
+        with open(sys.argv[2], encoding = 'utf-8', mode='r') as reader:
             for line in reader:
                 n += 1
 
