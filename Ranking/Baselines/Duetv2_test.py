@@ -466,9 +466,9 @@ def goEnvInit():
     print_message('Start goEnvInit')
 
     if torch.cuda.is_available():
-        DEVICE = torch.device("cuda:0,1")
+        DEVICE = torch.device("cuda:1")
 
-        print_message('Init device on cuda:0,1')
+        print_message('Init device on cuda:1')
     else :
         DEVICE = torch.device("cpu")
 
