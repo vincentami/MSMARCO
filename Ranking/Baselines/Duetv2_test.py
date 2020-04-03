@@ -475,7 +475,7 @@ def goEnvInit():
 
         print_message('Init device on cpu:all')
 
-    ts = datetime.datetime.utcnow().strftime("%b %d, %H:%M:%S")
+    ts = datetime.datetime.utcnow().strftime("%b-%d-%H-%M-%S")
     print_message('Finished goEnvInit')
 
     return device, ts
