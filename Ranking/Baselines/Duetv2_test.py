@@ -416,7 +416,7 @@ def getScore(sid, index, res_dev):
 
         # print_message("getSocre sid:{} index:{} dMap:{} ".format(sid, index, dMap.keys()))
         if index in dMap.keys():
-            score = float(dMap[index])
+            score = float(dMap[index])/NUM_EPOCHS
 
     return score
 
