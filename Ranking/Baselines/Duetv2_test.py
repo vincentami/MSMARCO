@@ -369,7 +369,8 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 train_loss += mini_loss
 
                 if (mb_idx%1001 == 1):
-                    print_message("EPOCH_SIZE index:{} train_loss:{} loss_mini:{}".format(mb_idx, train_loss/(mb_idx+1), mini_loss))
+                    print_message("EPOCH_SIZE index:{} train_loss:{} loss_mini:{} noneIDF:{}"
+                                  .format(mb_idx, train_loss/(mb_idx+1), mini_loss, reader_train.none_idf_no))
 
             print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
 
@@ -474,7 +475,7 @@ def goEnvInit():
 
     devName = "cpu"
     if torch.cuda.is_available():
-        devName = "cuda:1"
+        devName = "cuda:0"
 
     device = torch.device(devName)
 
@@ -514,8 +515,8 @@ EPOCH_SIZE = 8192*2
 
 NUM_EPOCHS = 8
 
-# NUM_ENSEMBLES = 8
-NUM_ENSEMBLES = 1
+NUM_ENSEMBLES = 8
+# NUM_ENSEMBLES = 1
 
 LEARNING_RATE = 0.005
 
