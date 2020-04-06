@@ -396,7 +396,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                           torch.from_numpy(features['mask_d'][0]).to(device))
             meta_cnt = len(features['meta'])
 
-            if (loop_cnt %(10001) == 1):
+            if (loop_cnt %(1001) == 1):
                 print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
 
             out = out.data.cpu()
