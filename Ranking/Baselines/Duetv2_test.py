@@ -119,6 +119,7 @@ class DataReader:
         self.__load_idfs()
         self.__init_data(data_file)
         self.__allocate_minibatch()
+        self.none_idf_no = 0
 
     def __tokenize(self, s, max_terms):
         return self.regex_multi_space.sub(' ', self.regex_drop_char.sub(' ', s.lower())).strip().split()[:max_terms]
@@ -214,7 +215,11 @@ class DataReader:
                     for j in range(len(ds[d])):
                         for k in range(len(q)):
                             if ds[d][j] == q[k]:
-                                self.features['local'][d][i, j, k] = self.idfs[q[k]]
+                                if q[k] in self.idfs:
+                                    self.features['local'][d][i, j, k] = self.idfs[q[k]]
+                                else:
+                                    self.features['local'][d][i, j, k] = 0.0
+                                    self.none_idf_no = self.none_idf_no + 1
             if ARCH_TYPE > 0:
                 for j in range(self.num_docs + 1):
                     terms = q if j == 0 else ds[j - 1]
