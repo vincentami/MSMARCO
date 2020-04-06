@@ -331,7 +331,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
     # res_eval = {}
 
     print_message('Starting')
-    print_message('Learning rate: {}'.format(LEARNING_RATE))
+    print_message('Learning rate: {} NUM_ENSEMBLES:{}'.format(LEARNING_RATE, NUM_ENSEMBLES))
     for ens_idx in range(NUM_ENSEMBLES):
         torch.manual_seed(ens_idx + 1)
         net = Duet(reader_train, device)
