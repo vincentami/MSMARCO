@@ -371,9 +371,9 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 if (mb_idx%101 == 1):
                     print_message("EPOCH_SIZE index:{} train_loss:{} loss_mini:{}".format(mb_idx, train_loss/(mb_idx+1), mini_loss))
 
-            torch.save(net, MODEL_FILE.format(name, ens_idx + 1, ep_idx + 1,ts))
             print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
 
+        torch.save(net, MODEL_FILE.format(name, ens_idx + 1, ep_idx + 1, ts))
 
         is_complete = False
         reader_dev.reset()
