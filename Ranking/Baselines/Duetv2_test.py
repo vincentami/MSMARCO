@@ -410,9 +410,10 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 res_dev[q][d] += out[i][0]
 
             is_complete = (meta_cnt < MB_SIZE)
-        print_message("eval 1")
 
-        return res_dev
+        print_message("eval :{}".format(ens_idx))
+
+    return res_dev
 
 def getScore(sid, index, res_dev):
     score = DEFAULT_VAL
