@@ -471,17 +471,17 @@ def goEval(res_dev, df_dev):
 def goEnvInit():
     print_message('Start goEnvInit')
 
+    devName = "cpu"
     if torch.cuda.is_available():
-        device = torch.device("cuda:0")
+        devName = "cuda:0"
 
-        print_message('Init device on cuda:0')
-    else :
-        device = torch.device("cpu")
-
-        print_message('Init device on cpu:all')
+    device = torch.device(devName)
 
     ts = datetime.datetime.utcnow().strftime("%b-%d-%H-%M-%S")
     print_message('Finished goEnvInit')
+
+    print_message('EnvPrint dev:{} en:{} ep:{} epSize:{} lr:{}'
+                  .format(devName,NUM_ENSEMBLES, NUM_EPOCHS, EPOCH_SIZE*MB_SIZE, LEARNING_RATE))
 
     return device, ts
 
@@ -555,7 +555,7 @@ def main(argv):
 
     res_dev = goRun(device, reader_train, reader_dev, reader_eval, ts, argv[1])
 
-    goEval(res_dev, df_dev)
+    # goEval(res_dev, df_dev)
 
 if __name__ == "__main__":
     # os.environ["CUDA_VISIBLE_deviceS"] = "0,1,2,3"
