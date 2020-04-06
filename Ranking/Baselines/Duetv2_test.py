@@ -472,9 +472,9 @@ def goEnvInit():
     print_message('Start goEnvInit')
 
     if torch.cuda.is_available():
-        device = torch.device("cuda:1")
+        device = torch.device("cuda:0")
 
-        print_message('Init device on cuda:1')
+        print_message('Init device on cuda:0')
     else :
         device = torch.device("cpu")
 
@@ -512,10 +512,10 @@ EPOCH_SIZE = 8192*2
 
 NUM_EPOCHS = 8
 
-NUM_ENSEMBLES = 1
+NUM_ENSEMBLES = 8
 # NUM_ENSEMBLES = 1
 
-LEARNING_RATE = 0.001
+LEARNING_RATE = 0.005
 
 DEFAULT_VAL = -0.00001
 
