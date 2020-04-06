@@ -556,7 +556,7 @@ def main(argv):
 
     res_dev = goRun(device, reader_train, reader_dev, reader_eval, ts, argv[1])
 
-    # goEval(res_dev, df_dev)
+    goEval(res_dev, df_dev)
 
 if __name__ == "__main__":
     # os.environ["CUDA_VISIBLE_deviceS"] = "0,1,2,3"
