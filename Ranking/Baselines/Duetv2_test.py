@@ -325,7 +325,7 @@ def goInit(data_file_train, data_file_dev, data_file_eval):
     return reader_train, reader_dev, reader_eval, df
 
 
-def goRun(device, reader_train, reader_dev, reader_eval, ts):
+def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
 
     res_dev = {}
     # res_eval = {}
@@ -371,7 +371,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts):
                 if (mb_idx%101 == 1):
                     print_message("EPOCH_SIZE index:{} train_loss:{} loss_mini:{}".format(mb_idx, train_loss/(mb_idx+1), mini_loss))
 
-            torch.save(net, MODEL_FILE.format(ens_idx + 1, ep_idx + 1,ts))
+            torch.save(net, MODEL_FILE.format(name, ens_idx + 1, ep_idx + 1,ts))
             print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
 
 
@@ -508,7 +508,8 @@ DROPOUT_RATE = 0.5
 # EPOCH_SIZE = 25600
 
 MB_SIZE = 1024
-EPOCH_SIZE = 8192*2
+# EPOCH_SIZE = 8192*2
+EPOCH_SIZE = 16
 
 NUM_EPOCHS = 8
 
@@ -539,16 +540,23 @@ DATA_FILE_EVAL = os.path.join(DATA_DIR, "1w.top1000.eval")
 # DATA_FILE_OUT_DEV = os.path.join(DATA_DIR, "s.output.dev.tsv")
 # DATA_FILE_OUT_EVAL = os.path.join(DATA_DIR, "s.output.eval.tsv")
 
-MODEL_FILE = os.path.join(DATA_DIR, "duet.ens{}.ep{}.dnn.{}")
+MODEL_FILE = os.path.join(DATA_DIR, "duet.{}.ens{}.ep{}.dnn.{}")
 
+def main(argv):
+    if len(argv) != 2 :
+        print("arg err: len = %d" %(len(argv)))
+        print("arg like: python duet.py name ")
+    else:
+        print("go main : %d" %(len(argv)))
 
-if __name__ == "__main__":
-
-    # os.environ["CUDA_VISIBLE_deviceS"] = "0,1,2,3"
     device, ts = goEnvInit()
 
     reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
 
-    res_dev = goRun(device, reader_train, reader_dev, reader_eval, ts)
+    res_dev = goRun(device, reader_train, reader_dev, reader_eval, ts, argv[1])
 
     goEval(res_dev, df_dev)
+
+if __name__ == "__main__":
+    # os.environ["CUDA_VISIBLE_deviceS"] = "0,1,2,3"
+    main(sys.argv)
