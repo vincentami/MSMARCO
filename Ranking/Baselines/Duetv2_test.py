@@ -368,7 +368,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 mini_loss = loss.item()
                 train_loss += mini_loss
 
-                if (mb_idx%101 == 1):
+                if (mb_idx%10001 == 1):
                     print_message("EPOCH_SIZE index:{} train_loss:{} loss_mini:{}".format(mb_idx, train_loss/(mb_idx+1), mini_loss))
 
             print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
