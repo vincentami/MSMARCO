@@ -107,25 +107,6 @@ def adNdcgPrint(df, sidKey, scoreKey, labelKey):
 
     calNDCG(5, resDict)
 
-def goEval(res_dev, df_dev):
-    print_message('Start Inference')
-
-    df_rel = df_dev.__deepcopy__()
-    adNdcgPrint(df_rel, 'sid', 'rel', 'label')
-
-    df_org = df_dev.__deepcopy__()
-    df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
-    adNdcgPrint(df_org, 'sid', 'index', 'label')
-
-    indexR = range(0, len(df_dev))
-    a_pd = pd.DataFrame(index = indexR, columns = ['score'])
-    a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], str(x['index']), res_dev) , axis=1)
-    df_new = pd.concat([df_dev, a_pd], axis=1)
-
-    df_new.sort_values(by=['sid', 'score'], ascending=False, inplace=True)
-    adNdcgPrint(df_new, 'sid', 'score', 'label')
-
-
 class DataReader:
     def __init__(self, data_file, num_meta_cols, multi_pass):
         self.num_meta_cols = num_meta_cols
@@ -345,6 +326,34 @@ def goInit(modelPath, data_file_dev, device):
     return model_dict, reader_dev, df
 
 
+def goEval(res_dev, df_dev, savePath):
+    print_message('ReSum Start size:{}'.format(len(df_dev)))
+
+    # df_rel = df_dev.__deepcopy__()
+    # adNdcgPrint(df_rel, 'sid', 'rel', 'label')
+    #
+    # df_org = df_dev.__deepcopy__()
+    # df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
+    # adNdcgPrint(df_org, 'sid', 'index', 'label')
+
+    indexR = range(0, len(df_dev))
+    a_pd = pd.DataFrame(index = indexR, columns = ['score'])
+    a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], str(x['index']), res_dev) , axis=1)
+    df_new = pd.concat([df_dev, a_pd], axis=1)
+
+    df_new.to_csv(path_or_buf=savePath, sep=', ', na_rep='', float_format=None, columns=['sid','index','score','rel','label','query','doc'], header=True, index=True,
+                     index_label=None, mode='w', encoding=None, compression=None, quoting=None, quotechar='"',
+                     line_terminator='\n', chunksize=None, tupleize_cols=None, date_format=None, doublequote=True,
+                     escapechar=None, decimal='.')
+
+    # df_new.sort_values(by=['sid', 'score'], ascending=False, inplace=True)
+    # adNdcgPrint(df_new, 'sid', 'score', 'label')
+
+    print_message('ReSum End ')
+
+
+
+
 def goInfer(model, data_dev, device):
 
     res_dev = {}
@@ -450,13 +459,17 @@ def main(argv):
         print("go main : %d" %(len(argv)))
         print_message("modelPath:{} dev_data:{} savePath:{}".format(argv[1], argv[2], argv[3]))
 
+    modelPath = argv[1]
+    devData = argv[2]
+    savaPath = argv[3]
+
     device, ts = goEnvInit()
 
-    model, dev_data, df_dev = goInit(argv[1], argv[2], device)
+    model_net, dev_data, df_dev = goInit(modelPath, devData, device)
 
-    dev_save = goInfer(model, dev_data, device)
+    dev_save = goInfer(model_net, dev_data, device)
 
-    goEval(dev_save, df_dev)
+    goEval(dev_save, df_dev, savaPath)
 
 if __name__ == "__main__":
     # os.environ["CUDA_VISIBLE_deviceS"] = "0,1,2,3"
