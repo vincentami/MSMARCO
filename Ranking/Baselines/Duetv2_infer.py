@@ -307,22 +307,19 @@ class Duet(torch.nn.Module):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
 
 
-def goInit(data_file_train, data_file_dev, data_file_eval):
+def goInit(modelPath, data_file_dev):
 
     print_message('GoInit Start')
 
-    reader_train = DataReader(data_file_train, 0, True)
     reader_dev = DataReader(data_file_dev, 4, False)
-    reader_eval = DataReader(data_file_eval, 2, False)
 
     print_message('GoInit End')
 
-    feNames = ['sid', 'index', 'rel', 'label', 'query', 'doc']
+    # feNames = ['sid', 'index', 'rel', 'label', 'query', 'doc']
+    # df = pd.read_csv(data_file_dev, header=None, sep='\t', names=feNames)
+    # df.sort_values(by=['sid', 'rel'], ascending=True, inplace=True)
 
-    df = pd.read_csv(data_file_dev, header=None, sep='\t', names=feNames)
-    df.sort_values(by=['sid', 'rel'], ascending=True, inplace=True)
-
-    return reader_train, reader_dev, reader_eval, df
+    return reader_dev
 
 
 def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
@@ -545,19 +542,22 @@ DATA_FILE_EVAL = os.path.join(DATA_DIR, "1w.top1000.eval")
 MODEL_FILE = os.path.join(DATA_DIR, "duet.{}.ens{}.ep{}.dnn.{}")
 
 def main(argv):
-    if len(argv) != 2 :
+    if len(argv) != 5 :
         print("arg err: len = %d" %(len(argv)))
-        print("arg like: python duet.py name ")
+        print("arg like: python duet.py modelName dev_data savePath ")
     else:
         print("go main : %d" %(len(argv)))
+        print_message("modelPath:{} dev_data:{} savePath:{}".format(argv[1], argv[2], argv[3]))
 
     device, ts = goEnvInit()
 
-    reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
+    model, dev_data = goInit(argv[1], argv[2])
 
-    res_dev = goRun(device, reader_train, reader_dev, reader_eval, ts, argv[1])
+    # reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
 
-    goEval(res_dev, df_dev)
+    # res_dev = goRun(device, reader_train, reader_dev, reader_eval, ts, argv[1])
+
+    # goEval(res_dev, df_dev)
 
 if __name__ == "__main__":
     # os.environ["CUDA_VISIBLE_deviceS"] = "0,1,2,3"
