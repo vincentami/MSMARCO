@@ -20,6 +20,112 @@ def print_message(s):
     print("[{}] {}".format(datetime.datetime.utcnow().strftime("%b %d, %H:%M:%S"), s), flush=True)
 
 
+
+def getDcg(valuesSeg, level):
+    topIndex = len(valuesSeg)
+    if (topIndex > level):
+        topIndex = level
+
+    dcgV = 0.0
+    for i in range(topIndex):
+        dcgV += (math.pow(2,valuesSeg[i]) - 1)/math.log(i+1+1,2)
+        # print i, valuesSeg[i], dcgV
+
+    return dcgV
+
+def getIdcg(valuesSeg, level):
+    valuesSegNew = copy.deepcopy(valuesSeg)
+
+    valuesSegNew.sort(reverse=True)
+    idcgV = getDcg( valuesSegNew, level)
+
+    return idcgV
+
+def ndcgCal(sDict, level):
+    ndcgDict = {}
+    for k,v in sDict.items():
+        query = k
+        value = v
+        if (level > 1):
+            dcg = getDcg(value, level)
+            idcg = getIdcg(value, level)
+
+            # print  dcg/(idcg+1),dcg, idcg, query
+
+            ndcg = dcg/(idcg+0.000001)
+            ndcgDict.update({query: [ndcg, len(value)]})
+
+    return ndcgDict
+
+def calNDCG(level, sDict):
+    indexNo = 0
+    allDcgVale = 0.0
+    ndcg_10 = ndcgCal(sDict, level)
+    for k,v in ndcg_10.items():
+        allDcgVale = allDcgVale + v[0]
+        indexNo = indexNo + 1
+        # print k,v
+
+    print_message("ndcg@{}  {}, indexNo:{}".format(level, (allDcgVale/indexNo), indexNo))
+
+def adNdcgPrint(df, sidKey, scoreKey, labelKey):
+
+    tmpDict = {}
+    for index, row in df.iterrows():
+        # print row["sid"], row["index"], row['label']
+        vaKey = row[sidKey]
+        vaScore = float(row[scoreKey])
+        vaLabel = row[labelKey]
+        vaIndex = row['index']
+
+        if vaKey in tmpDict:
+            valList = tmpDict[vaKey]
+            valList.append([vaScore, vaLabel, vaIndex])
+        else :
+            tmpDict.update({vaKey: [[vaScore, vaLabel, vaIndex]]})
+
+    print_message("adNdcgPrint sid dict count:{}".format(len(tmpDict)))
+
+    pIndex = 1
+    resDict = {}
+    for k,v in tmpDict.items():
+        tmpV = sorted(v, key=lambda x: x[0], reverse=True)
+        # tmpV = sorted(v, key=lambda x: x[0] )
+
+        pIndex = pIndex + 1
+        if(pIndex < 2):
+            print_message("{} {}".format(k,tmpV))
+
+        val = []
+        for i in range(len(tmpV)):
+            val.append(tmpV[i][1])
+
+        resDict.update({k: val})
+
+
+    calNDCG(10, resDict)
+
+    calNDCG(5, resDict)
+
+def goEval(res_dev, df_dev):
+    print_message('Start Inference')
+
+    df_rel = df_dev.__deepcopy__()
+    adNdcgPrint(df_rel, 'sid', 'rel', 'label')
+
+    df_org = df_dev.__deepcopy__()
+    df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
+    adNdcgPrint(df_org, 'sid', 'index', 'label')
+
+    indexR = range(0, len(df_dev))
+    a_pd = pd.DataFrame(index = indexR, columns = ['score'])
+    a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], str(x['index']), res_dev) , axis=1)
+    df_new = pd.concat([df_dev, a_pd], axis=1)
+
+    df_new.sort_values(by=['sid', 'score'], ascending=False, inplace=True)
+    adNdcgPrint(df_new, 'sid', 'score', 'label')
+
+
 class DataReader:
     def __init__(self, data_file, num_meta_cols, multi_pass):
         self.num_meta_cols = num_meta_cols
@@ -232,11 +338,11 @@ def goInit(modelPath, data_file_dev, device):
 
     print_message('GoInit End')
 
-    # feNames = ['sid', 'index', 'rel', 'label', 'query', 'doc']
-    # df = pd.read_csv(data_file_dev, header=None, sep='\t', names=feNames)
-    # df.sort_values(by=['sid', 'rel'], ascending=True, inplace=True)
+    feNames = ['sid', 'index', 'rel', 'label', 'query', 'doc']
+    df = pd.read_csv(data_file_dev, header=None, sep='\t', names=feNames)
+    df.sort_values(by=['sid', 'rel'], ascending=True, inplace=True)
 
-    return model_dict, reader_dev
+    return model_dict, reader_dev, df
 
 
 def goInfer(model, data_dev, device):
@@ -346,15 +452,11 @@ def main(argv):
 
     device, ts = goEnvInit()
 
-    model, dev_data = goInit(argv[1], argv[2], device)
+    model, dev_data, df_dev = goInit(argv[1], argv[2], device)
 
     dev_save = goInfer(model, dev_data, device)
 
-    # reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
-
-    # res_dev = goRun(device, reader_train, reader_dev, reader_eval, ts, argv[1])
-
-    # goEval(res_dev, df_dev)
+    goEval(dev_save, df_dev)
 
 if __name__ == "__main__":
     # os.environ["CUDA_VISIBLE_deviceS"] = "0,1,2,3"
