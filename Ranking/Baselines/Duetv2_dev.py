@@ -324,8 +324,6 @@ def goInit(data_file_train, data_file_dev, data_file_eval):
 
     return reader_train, reader_dev, reader_eval, df
 
-def goInfer(device, modelPath, reader_dev, savePath):
-
 
 def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
 

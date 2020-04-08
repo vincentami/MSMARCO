@@ -20,95 +20,6 @@ def print_message(s):
     print("[{}] {}".format(datetime.datetime.utcnow().strftime("%b %d, %H:%M:%S"), s), flush=True)
 
 
-def getDcg(valuesSeg, level):
-    topIndex = len(valuesSeg)
-    if (topIndex > level):
-        topIndex = level
-
-    dcgV = 0.0
-    for i in range(topIndex):
-        dcgV += (math.pow(2,valuesSeg[i]) - 1)/math.log(i+1+1,2)
-        # print i, valuesSeg[i], dcgV
-
-    return dcgV
-
-def getIdcg(valuesSeg, level):
-    valuesSegNew = copy.deepcopy(valuesSeg)
-
-    valuesSegNew.sort(reverse=True)
-    idcgV = getDcg( valuesSegNew, level)
-
-    return idcgV
-
-def ndcgCal(sDict, level):
-    ndcgDict = {}
-    for k,v in sDict.items():
-        query = k
-        value = v
-        if (level > 1):
-            dcg = getDcg(value, level)
-            idcg = getIdcg(value, level)
-
-            # print  dcg/(idcg+1),dcg, idcg, query
-
-            ndcg = dcg/(idcg+0.000001)
-            ndcgDict.update({query: [ndcg, len(value)]})
-
-    return ndcgDict
-
-def calNDCG(level, sDict):
-    indexNo = 0
-    allDcgVale = 0.0
-    ndcg_10 = ndcgCal(sDict, level)
-    for k,v in ndcg_10.items():
-        allDcgVale = allDcgVale + v[0]
-        indexNo = indexNo + 1
-        # print k,v
-
-    print_message("ndcg@{}  {}, indexNo:{}".format(level, (allDcgVale/indexNo), indexNo))
-
-def adNdcgPrint(df, sidKey, scoreKey, labelKey):
-
-    tmpDict = {}
-    for index, row in df.iterrows():
-        # print row["sid"], row["index"], row['label']
-        vaKey = row[sidKey]
-        vaScore = float(row[scoreKey])
-        vaLabel = row[labelKey]
-        vaIndex = row['index']
-
-        if vaKey in tmpDict:
-            valList = tmpDict[vaKey]
-            valList.append([vaScore, vaLabel, vaIndex])
-        else :
-            tmpDict.update({vaKey: [[vaScore, vaLabel, vaIndex]]})
-
-    print_message("adNdcgPrint sid dict count:{}".format(len(tmpDict)))
-
-    pIndex = 1
-    resDict = {}
-    for k,v in tmpDict.items():
-        tmpV = sorted(v, key=lambda x: x[0], reverse=True)
-        # tmpV = sorted(v, key=lambda x: x[0] )
-
-        pIndex = pIndex + 1
-        if(pIndex < 2):
-            print_message("{} {}".format(k,tmpV))
-
-        val = []
-        for i in range(len(tmpV)):
-            val.append(tmpV[i][1])
-
-        resDict.update({k: val})
-
-
-    # print_message("adNdcgPrint resDict count :%{}".format(len(resDict)))
-
-    calNDCG(10, resDict)
-
-    calNDCG(5, resDict)
-
-
 class DataReader:
     def __init__(self, data_file, num_meta_cols, multi_pass):
         self.num_meta_cols = num_meta_cols
@@ -307,9 +218,15 @@ class Duet(torch.nn.Module):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
 
 
-def goInit(modelPath, data_file_dev):
+def goInit(modelPath, data_file_dev, device):
 
     print_message('GoInit Start')
+
+    model_dict = torch.load(modelPath)
+
+    model_dict.eval()
+
+    model_dict.to(device)
 
     reader_dev = DataReader(data_file_dev, 4, False)
 
@@ -319,99 +236,50 @@ def goInit(modelPath, data_file_dev):
     # df = pd.read_csv(data_file_dev, header=None, sep='\t', names=feNames)
     # df.sort_values(by=['sid', 'rel'], ascending=True, inplace=True)
 
-    return reader_dev
+    return model_dict, reader_dev
 
 
-def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
+def goInfer(model, data_dev, device):
 
     res_dev = {}
-    # res_eval = {}
 
-    print_message('Starting')
-    print_message('Learning rate: {} NUM_ENSEMBLES:{}'.format(LEARNING_RATE, NUM_ENSEMBLES))
-    for ens_idx in range(NUM_ENSEMBLES):
-        torch.manual_seed(ens_idx + 1)
-        net = Duet(reader_train, device)
-        net = net.to(device)
-        criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(net.parameters(), lr=LEARNING_RATE)
-        print_message('Number of learnable parameters: {}'.format(net.parameter_count()))
-        for ep_idx in range(NUM_EPOCHS):
-            train_loss = 0.0
-            net.train()
-            print_message("NUM_EPOCHS index:" + str(ep_idx))
-            for mb_idx in range(EPOCH_SIZE):
-                features = reader_train.get_minibatch()
-                if ARCH_TYPE == 0:
-                    out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(device), None, None) for i in
-                                           range(reader_train.num_docs)]), 1)
-                elif ARCH_TYPE == 1:
-                    out = torch.cat(tuple([net(None, torch.from_numpy(features['dist_q']).to(device),
-                                               torch.from_numpy(features['dist_d'][i]).to(device),
-                                               torch.from_numpy(features['mask_q']).to(device),
-                                               torch.from_numpy(features['mask_d'][i]).to(device)) for i in
-                                           range(reader_train.num_docs)]), 1)
-                else:
-                    out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(device),
-                                               torch.from_numpy(features['dist_q']).to(device),
-                                               torch.from_numpy(features['dist_d'][i]).to(device),
-                                               torch.from_numpy(features['mask_q']).to(device),
-                                               torch.from_numpy(features['mask_d'][i]).to(device)) for i in
-                                           range(reader_train.num_docs)]), 1)
-                loss = criterion(out, torch.from_numpy(features['labels']).to(device))
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-                mini_loss = loss.item()
-                train_loss += mini_loss
+    loop_cnt = 0
+    while not is_complete:
+        features = data_dev.get_minibatch()
+        loop_cnt = loop_cnt + 1
+        if ARCH_TYPE == 0:
+            out = model(torch.from_numpy(features['local'][0]).to(device), None, None)
+        elif ARCH_TYPE == 1:
+            out = model(None, torch.from_numpy(features['dist_q']).to(device),
+                      torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(device),
+                                       torch.from_numpy(features['mask_d'][0]).to(device)).to(device))
+        else:
+            out = model(torch.from_numpy(features['local'][0]).to(device),
+                      torch.from_numpy(features['dist_q']).to(device),
+                      torch.from_numpy(features['dist_d'][0]).to(device),
+                      torch.from_numpy(features['mask_q']).to(device),
+                      torch.from_numpy(features['mask_d'][0]).to(device))
+        meta_cnt = len(features['meta'])
 
-                if (mb_idx%1001 == 1):
-                    print_message("EPOCH_SIZE index:{} train_loss:{} loss_mini:{} noneIDF:{}"
-                                  .format(mb_idx, train_loss/(mb_idx+1), mini_loss, reader_train.none_idf_no))
+        if (loop_cnt % (1001) == 1):
+            print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
 
-            print_message('model:{}, epoch:{}, loss:{}'.format(ens_idx + 1, ep_idx + 1, train_loss / EPOCH_SIZE))
+        out = out.data.cpu()
+        for i in range(meta_cnt):
+            q = features['meta'][i][0]
+            d = features['meta'][i][1]
+            if q not in res_dev:
+                res_dev[q] = {}
+            if d not in res_dev[q]:
+                res_dev[q][d] = 0
+            res_dev[q][d] += out[i][0]
 
-        torch.save(net, MODEL_FILE.format(name, ens_idx + 1, ep_idx + 1, ts))
+        is_complete = (meta_cnt < MB_SIZE)
 
-        is_complete = False
-        reader_dev.reset()
-        net.eval()
-        loop_cnt=0
-        while not is_complete:
-            features = reader_dev.get_minibatch()
-            loop_cnt = loop_cnt + 1
-            if ARCH_TYPE == 0:
-                out = net(torch.from_numpy(features['local'][0]).to(device), None, None)
-            elif ARCH_TYPE == 1:
-                out = net(None, torch.from_numpy(features['dist_q']).to(device),
-                          torch.from_numpy(features['dist_d'][0], torch.from_numpy(features['mask_q']).to(device),
-                                           torch.from_numpy(features['mask_d'][0]).to(device)).to(device))
-            else:
-                out = net(torch.from_numpy(features['local'][0]).to(device),
-                          torch.from_numpy(features['dist_q']).to(device),
-                          torch.from_numpy(features['dist_d'][0]).to(device),
-                          torch.from_numpy(features['mask_q']).to(device),
-                          torch.from_numpy(features['mask_d'][0]).to(device))
-            meta_cnt = len(features['meta'])
-
-            if (loop_cnt %(1001) == 1):
-                print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
-
-            out = out.data.cpu()
-            for i in range(meta_cnt):
-                q = features['meta'][i][0]
-                d = features['meta'][i][1]
-                if q not in res_dev:
-                    res_dev[q] = {}
-                if d not in res_dev[q]:
-                    res_dev[q][d] = 0
-                res_dev[q][d] += out[i][0]
-
-            is_complete = (meta_cnt < MB_SIZE)
-
-        print_message("eval :{}".format(ens_idx))
+    print_message("eval count:{}".format(len(res_dev)))
 
     return res_dev
+
 
 def getScore(sid, index, res_dev):
     score = DEFAULT_VAL
@@ -420,51 +288,9 @@ def getScore(sid, index, res_dev):
 
         # print_message("getSocre sid:{} index:{} dMap:{} ".format(sid, index, dMap.keys()))
         if index in dMap.keys():
-            score = float(dMap[index])/NUM_ENSEMBLES
+            score = float(dMap[index])
 
     return score
-
-def goEval(res_dev, df_dev):
-    print_message('Start Inference')
-
-    df_rel = df_dev.__deepcopy__()
-    adNdcgPrint(df_rel, 'sid', 'rel', 'label')
-
-    df_org = df_dev.__deepcopy__()
-    df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
-    adNdcgPrint(df_org, 'sid', 'index', 'label')
-
-    indexR = range(0, len(df_dev))
-    a_pd = pd.DataFrame(index = indexR, columns = ['score'])
-    a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], str(x['index']), res_dev) , axis=1)
-    df_new = pd.concat([df_dev, a_pd], axis=1)
-
-    df_new.sort_values(by=['sid', 'score'], ascending=False, inplace=True)
-    adNdcgPrint(df_new, 'sid', 'score', 'label')
-
-    # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
-    #
-    # for index, row in df_new.iterrows():
-    #     if (index < 10):
-    #         print_message("sort after index:{} ,row:{}".format(index, row))
-    #
-    #
-
-    # adNdcgPrint(df_new)
-
-    # with open(DATA_FILE_OUT_DEV, mode='w', encoding="utf-8") as f:
-    #     for qid, docs in res_dev.items():
-    #         ranked = sorted(docs, key=docs.get, reverse=True)
-    #         for i in range(min(len(ranked), 10)):
-    #             f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
-    #
-    # with open(DATA_FILE_OUT_EVAL, mode='w', encoding="utf-8") as f:
-    #     for qid, docs in res_eval.items():
-    #         ranked = sorted(docs, key=docs.get, reverse=True)
-    #         for i in range(min(len(ranked), 10)):
-    #             f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
-
-    print_message('Finished Inference')
 
 
 def goEnvInit():
@@ -478,9 +304,6 @@ def goEnvInit():
 
     ts = datetime.datetime.utcnow().strftime("%b-%d-%H-%M-%S")
     print_message('Finished goEnvInit')
-
-    print_message('EnvPrint dev:{} en:{} ep:{} epSize:{} lr:{}'
-                  .format(devName,NUM_ENSEMBLES, NUM_EPOCHS, EPOCH_SIZE*MB_SIZE, LEARNING_RATE))
 
     return device, ts
 
@@ -500,22 +323,7 @@ NUM_POOLING_WINDOWS_DOC = (MAX_DOC_TERMS - TERM_WINDOW_SIZE + 1) - POOLING_KERNE
 VOCAB_SIZE = 0
 DROPOUT_RATE = 0.5
 
-# MB_SIZE = 64
-# EPOCH_SIZE = 64
-
-# MB_SIZE = 1024
-# EPOCH_SIZE = 25600
-
 MB_SIZE = 1024
-EPOCH_SIZE = 8192*2
-# EPOCH_SIZE = 16
-
-NUM_EPOCHS = 8
-
-# NUM_ENSEMBLES = 8
-NUM_ENSEMBLES = 1
-
-LEARNING_RATE = 0.001
 
 DEFAULT_VAL = -0.00001
 
@@ -525,21 +333,6 @@ DATA_FILE_VOCAB = os.path.join(DATA_DIR, "s_vocab.tsv")
 DATA_EMBEDDINGS = os.path.join(DATA_DIR, "ft.vec.txt")
 DATA_FILE_IDFS = os.path.join(DATA_DIR, "s_idf.norm.tsv")
 
-DATA_FILE_TRAIN = os.path.join(DATA_DIR, "train.txt")
-
-
-DATA_FILE_DEV = os.path.join(DATA_DIR, "eval.txt")
-
-# DATA_FILE_DEV = os.path.join(DATA_DIR, "1w.top1000.dev")
-DATA_FILE_EVAL = os.path.join(DATA_DIR, "1w.top1000.eval")
-
-# QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.tsv")
-# QRELS_DEV = os.path.join(DATA_DIR, "qrels.dev.small.tsv")
-
-# DATA_FILE_OUT_DEV = os.path.join(DATA_DIR, "s.output.dev.tsv")
-# DATA_FILE_OUT_EVAL = os.path.join(DATA_DIR, "s.output.eval.tsv")
-
-MODEL_FILE = os.path.join(DATA_DIR, "duet.{}.ens{}.ep{}.dnn.{}")
 
 def main(argv):
     if len(argv) != 5 :
@@ -551,7 +344,9 @@ def main(argv):
 
     device, ts = goEnvInit()
 
-    model, dev_data = goInit(argv[1], argv[2])
+    model, dev_data = goInit(argv[1], argv[2], device)
+
+    dev_save = goInfer(model, dev_data, device)
 
     # reader_train, reader_dev, reader_eval, df_dev = goInit(DATA_FILE_TRAIN, DATA_FILE_DEV, DATA_FILE_EVAL)
 
