@@ -38,8 +38,8 @@
       <file leaf-file-name="Duetv2_infer.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2_infer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="501">
-              <caret line="353" column="0" lean-forward="true" selection-start-line="353" selection-start-column="0" selection-end-line="353" selection-end-column="0" />
+            <state relative-caret-position="366">
+              <caret line="344" column="110" lean-forward="true" selection-start-line="344" selection-start-column="110" selection-end-line="344" selection-end-column="110" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -730,8 +730,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Ranking/Baselines/Duetv2_infer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="501">
-          <caret line="353" column="0" lean-forward="true" selection-start-line="353" selection-start-column="0" selection-end-line="353" selection-end-column="0" />
+        <state relative-caret-position="366">
+          <caret line="344" column="110" lean-forward="true" selection-start-line="344" selection-start-column="110" selection-end-line="344" selection-end-column="110" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
