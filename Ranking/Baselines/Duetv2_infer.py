@@ -341,7 +341,7 @@ def goEval(res_dev, df_dev, savePath):
     a_pd['score'] = df_dev.apply(lambda x: getScore(x['sid'], str(x['index']), res_dev) , axis=1)
     df_new = pd.concat([df_dev, a_pd], axis=1)
 
-    df_new.to_csv(path_or_buf=savePath, sep=', ', na_rep='', float_format=None, columns=['sid','index','score','rel','label','query','doc'], header=True, index=True,
+    df_new.to_csv(path_or_buf=savePath, sep=',', na_rep='', float_format=None, columns=['sid','index','score','rel','label','query','doc'], header=True, index=True,
                      index_label=None, mode='w', encoding=None, compression=None, quoting=None, quotechar='"',
                      line_terminator='\n', chunksize=None, date_format=None, doublequote=True,
                      escapechar=None, decimal='.')
