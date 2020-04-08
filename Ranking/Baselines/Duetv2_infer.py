@@ -343,7 +343,7 @@ def goEval(res_dev, df_dev, savePath):
 
     df_new.to_csv(path_or_buf=savePath, sep=', ', na_rep='', float_format=None, columns=['sid','index','score','rel','label','query','doc'], header=True, index=True,
                      index_label=None, mode='w', encoding=None, compression=None, quoting=None, quotechar='"',
-                     line_terminator='\n', chunksize=None, tupleize_cols=None, date_format=None, doublequote=True,
+                     line_terminator='\n', chunksize=None, date_format=None, doublequote=True,
                      escapechar=None, decimal='.')
 
     # df_new.sort_values(by=['sid', 'score'], ascending=False, inplace=True)
