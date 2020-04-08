@@ -335,12 +335,13 @@ DATA_FILE_IDFS = os.path.join(DATA_DIR, "s_idf.norm.tsv")
 
 
 def main(argv):
-    if len(argv) != 5 :
+    if len(argv) != 4 :
         print("arg err: len = %d" %(len(argv)))
         print("arg like: python duet.py modelName dev_data savePath ")
     else:
         print("go main : %d" %(len(argv)))
         print_message("modelPath:{} dev_data:{} savePath:{}".format(argv[1], argv[2], argv[3]))
+        sys.exit(-1)
 
     device, ts = goEnvInit()
 
