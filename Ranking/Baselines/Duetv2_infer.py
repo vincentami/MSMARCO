@@ -242,8 +242,9 @@ def goInit(modelPath, data_file_dev, device):
 def goInfer(model, data_dev, device):
 
     res_dev = {}
-
     loop_cnt = 0
+    is_complete = False
+
     while not is_complete:
         features = data_dev.get_minibatch()
         loop_cnt = loop_cnt + 1
