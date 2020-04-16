@@ -23,31 +23,36 @@ def print_message(s):
 
 def main(argv):
 
-    a = torch.ones(5)
-    b = a.numpy()
+    # a = torch.ones(5)
+    # b = a.numpy()
+    #
+    # a.add_(1)
+    #
+    # print(a)
+    # print(b)
+    #
+    # a = np.ones(5)
+    # b = torch.from_numpy(a)
+    # np.add(a, 1, out=a)
+    # print(a)
+    # print(b)
+    #
+    # x = b
+    # y = x.add_(1)
+    #
+    # if torch.cuda.is_available():
+    #     x = x.cuda()
+    #     y = y.cuda()
+    #     z = x + y
+    #
+    #     print(x)
+    #     print(y)
+    #     print(z)
 
-    a.add_(1)
+    x = Variable(torch.ones(2, 2), requires_grad=True)
+    y = x + 2
+    y.creator
 
-    print(a)
-    print(b)
-
-    a = np.ones(5)
-    b = torch.from_numpy(a)
-    np.add(a, 1, out=a)
-    print(a)
-    print(b)
-
-    x = b
-    y = x.add_(1)
-
-    if torch.cuda.is_available():
-        x = x.cuda()
-        y = y.cuda()
-        z = x + y
-        
-        print(x)
-        print(y)
-        print(z)
 
 
 if __name__ == "__main__":
