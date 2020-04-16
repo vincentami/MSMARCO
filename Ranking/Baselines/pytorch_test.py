@@ -31,6 +31,19 @@ def main(argv):
     print(a)
     print(b)
 
+    a = np.ones(5)
+    b = torch.from_numpy(a)
+    np.add(a, 1, out=a)
+    print(a)
+    print(b)
+
+    if torch.cuda.is_available():
+        a = a.cuda()
+        b = b.cuda()
+        c = x + y
+        print(c)
+
+        
 if __name__ == "__main__":
     # os.environ["CUDA_VISIBLE_deviceS"] = "0,1,2,3"
     main(sys.argv)
