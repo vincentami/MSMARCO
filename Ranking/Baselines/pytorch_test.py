@@ -49,16 +49,30 @@ def main(argv):
     #     print(y)
     #     print(z)
 
-    x = Variable(torch.ones(2, 2), requires_grad=True)
-    y = x + 2
-    # y.creator
+    # x = Variable(torch.ones(2, 2), requires_grad=True)
+    # y = x + 2
+    # # y.creator
+    #
+    # z = y * y * 3
+    # out = z.mean()
+    #
+    # out.backward()
+    #
+    # print(x.grad)
 
-    z = y * y * 3
-    out = z.mean()
+    x = torch.randn(3)
+    print (x)
 
-    out.backward()
+    x = Variable(x, requires_grad = True)
+    print(x)
 
-    print(x.grad)
+    y = x * 2
+    while y.data.norm() < 1000:
+        y = y * 2
+    gradients = torch.FloatTensor([0.1, 1.0, 0.0001])
+
+    y.backward(gradients)
+    print (x.grad)
 
 
 if __name__ == "__main__":
