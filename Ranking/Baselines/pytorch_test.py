@@ -51,7 +51,7 @@ def main(argv):
 
     x = Variable(torch.ones(2, 2), requires_grad=True)
     y = x + 2
-    y.creator
+    # y.creator
 
     z = y * y * 3
     out = z.mean()
