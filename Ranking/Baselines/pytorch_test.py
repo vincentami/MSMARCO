@@ -58,7 +58,7 @@ def main(argv):
 
     out.backward()
 
-    x.grad
+    print(x.grad)
 
 
 if __name__ == "__main__":
