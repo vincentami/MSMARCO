@@ -53,6 +53,12 @@ def main(argv):
     y = x + 2
     y.creator
 
+    z = y * y * 3
+    out = z.mean()
+
+    out.backward()
+
+    x.grad
 
 
 if __name__ == "__main__":
