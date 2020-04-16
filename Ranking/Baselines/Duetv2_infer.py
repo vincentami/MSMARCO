@@ -317,11 +317,11 @@ def goInit(modelPath, data_file_dev, device):
 
     reader_dev = DataReader(data_file_dev, 4, False)
 
-    print_message('GoInit End')
-
     feNames = ['sid', 'index', 'rel', 'label', 'query', 'doc']
     df = pd.read_csv(data_file_dev, header=None, sep='\t', names=feNames)
     df.sort_values(by=['sid', 'rel'], ascending=True, inplace=True)
+
+    print_message('GoInit End')
 
     return model_dict, reader_dev, df
 
