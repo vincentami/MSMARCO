@@ -292,6 +292,19 @@ class Duet(torch.nn.Module):
                                        nn.Linear(NUM_HIDDEN_NODES, 1))
         self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
+    def predict(self, x):
+        ans = []
+        for t in x:
+                ans.append(t[1])
+        return torch.tensor(ans)
+
+        # for t in x:
+        #     if t[0] > t[1]:
+        #         ans.append(0)
+        #     else:
+        #         ans.append(1)
+        # return torch.tensor(ans)
+
     def forward(self, x_local, x_dist_q, x_dist_d, x_mask_q, x_mask_d):
         if ARCH_TYPE != 1:
             h_local = self.duet_local(x_local)
