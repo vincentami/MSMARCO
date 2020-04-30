@@ -315,9 +315,9 @@ class Duet(torch.nn.Module):
         y_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
-        pred = F.softmax(y_out, dim=1)
+        # pred = F.softmax(y_out, dim=1)
 
-        return pred
+        return y_out
         # for t in pred:
         #     if t[0] > t[1]:
         #         ans.append(0)
@@ -401,9 +401,9 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
 
                 # print_message("out 1:{}".format(out[:,1]))
 
-                score, predicted = torch.max(out.data, 1)
+                # score, predicted = torch.max(out.data, 1)
 
-                loss = criterion(predicted, torch.from_numpy(features['labels']).to(device))
+                loss = criterion(out.data, torch.from_numpy(features['labels']).to(device))
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
@@ -466,7 +466,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
 
                 res_dev[q][d] += res_score
 
-                # print_message("dev  meta_cnt:{} predicted:{} res_score:{}".format(str(i), str(predicted[i]), res_score))
+                print_message("dev  meta_cnt:{} predicted:{} res_score:{}".format(str(i), str(predicted[i]), res_score))
 
             is_complete = (meta_cnt < MB_SIZE)
 
