@@ -302,7 +302,7 @@ class Duet(torch.nn.Module):
         y_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
-        pred = F.softmax(y_out)
+        pred = F.softmax(y_out, dim=1)
         return pred[0]*self.scale
 
         # for t in pred:
