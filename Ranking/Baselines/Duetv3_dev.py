@@ -302,17 +302,25 @@ class Duet(torch.nn.Module):
         y_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
-        return y_out
+        pred = F.softmax(y_out)
+        return torch.tensor(pred[0])
 
-    def predict(self,x):
-        ans = []
-        pred = F.softmax(self.forward(x))
-        for t in pred:
-            if t[0] > t[1]:
-                ans.append(0)
-            else:
-                ans.append(1)
-        return torch.tensor(ans)
+        # for t in pred:
+        #     if t[0] > t[1]:
+        #         ans.append(0)
+        #     else:
+        #         ans.append(1)
+        # return torch.tensor(ans)
+
+    # def predict(self,x):
+    #     ans = []
+    #     pred = F.softmax(self.forward(x))
+    #     for t in pred:
+    #         if t[0] > t[1]:
+    #             ans.append(0)
+    #         else:
+    #             ans.append(1)
+    #     return torch.tensor(ans)
 
     def parameter_count(self):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
@@ -374,8 +382,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                                            for i in range(reader_train.num_docs)]
                                           ),1)
 
-                y_pred = net.predict(out)
-                loss = criterion(y_pred, torch.from_numpy(features['labels']).to(device))
+                loss = criterion(out, torch.from_numpy(features['labels']).to(device))
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
