@@ -424,6 +424,8 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                           torch.from_numpy(features['mask_d'][0]).to(device))
             meta_cnt = len(features['meta'])
 
+            print_message("out type:{}".format(out.shape))
+
             if (loop_cnt %(1001) == 1):
                 print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
 
@@ -435,7 +437,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q] = {}
                 if d not in res_dev[q]:
                     res_dev[q][d] = 0
-                res_dev[q][d] += (100 + out[i][1])
+                res_dev[q][d] += (100 + out[i][0])
 
             is_complete = (meta_cnt < MB_SIZE)
 
