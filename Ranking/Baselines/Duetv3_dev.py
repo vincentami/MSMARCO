@@ -382,7 +382,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                                            for i in range(reader_train.num_docs)]
                                           ),1)
 
-                print_message("out type:{}".format(out))
+                print_message("out type:{}".format(out.shape))
 
                 loss = criterion(out, torch.from_numpy(features['labels']).to(device))
                 optimizer.zero_grad()
