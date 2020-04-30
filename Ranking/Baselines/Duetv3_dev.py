@@ -14,6 +14,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.optim as optim
+import torch.nn.functional as F
 
 
 def print_message(s):
@@ -288,9 +289,8 @@ class Duet(torch.nn.Module):
                                        nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
                                        nn.ReLU(),
                                        nn.Dropout(p=DROPOUT_RATE),
-                                       nn.Linear(NUM_HIDDEN_NODES, 1),
-                                       nn.ReLU())
-        self.scale = torch.tensor([0.1], requires_grad=False).to(device)
+                                       nn.Linear(NUM_HIDDEN_NODES, 2))
+        # self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
     def forward(self, x_local, x_dist_q, x_dist_d, x_mask_q, x_mask_d):
         if ARCH_TYPE != 1:
@@ -299,9 +299,20 @@ class Duet(torch.nn.Module):
             h_dist_q = self.duet_dist_q((self.embed(x_dist_q) * x_mask_q).permute(0, 2, 1))
             h_dist_d = self.duet_dist_d((self.embed(x_dist_d) * x_mask_d).permute(0, 2, 1))
             h_dist = self.duet_dist(h_dist_q.unsqueeze(-1) * h_dist_d)
-        y_score = self.duet_comb(
-            (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local)) * self.scale
-        return y_score
+        y_out = self.duet_comb(
+            (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
+
+        return y_out
+
+    def predict(self,x):
+        ans = []
+        pred = F.softmax(self.forward(x))
+        for t in pred:
+            if t[0] > t[1]:
+                ans.append(0)
+            else:
+                ans.append(1)
+        return torch.tensor(ans)
 
     def parameter_count(self):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
@@ -362,7 +373,9 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                                                torch.from_numpy(features['mask_d'][i]).to(device))
                                            for i in range(reader_train.num_docs)]
                                           ),1)
-                loss = criterion(out, torch.from_numpy(features['labels']).to(device))
+
+                y_pred = net.forword(out)
+                loss = criterion(y_pred, torch.from_numpy(features['labels']).to(device))
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
