@@ -442,7 +442,18 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
             if (loop_cnt %(1001) == 1):
                 print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
 
-            out = out.data.cpu()
+            # out = out.data.cpu()
+            # for i in range(meta_cnt):
+            #     q = features['meta'][i][0]
+            #     d = features['meta'][i][1]
+            #     if q not in res_dev:
+            #         res_dev[q] = {}
+            #     if d not in res_dev[q]:
+            #         res_dev[q][d] = 0
+            #     res_dev[q][d] += out[i][0]
+
+            _, predicted = torch.max(out.data, 1)
+
             for i in range(meta_cnt):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
@@ -450,8 +461,9 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q] = {}
                 if d not in res_dev[q]:
                     res_dev[q][d] = 0
-                res_dev[q][d] += (100 + out[i][0])
-                print_message("dev res:{}".format(out[i][0]))
+                res_dev[q][d] += predicted[i][0]
+
+                print_message("dev  meta_cnt:{} predicted:{}".format(str(i), str(predicted[i][0])))
 
             is_complete = (meta_cnt < MB_SIZE)
 
