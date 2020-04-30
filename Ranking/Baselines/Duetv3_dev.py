@@ -438,6 +438,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 if d not in res_dev[q]:
                     res_dev[q][d] = 0
                 res_dev[q][d] += (100 + out[i][0])
+                print_message("dev res:{}".format(out[i][0]))
 
             is_complete = (meta_cnt < MB_SIZE)
 
