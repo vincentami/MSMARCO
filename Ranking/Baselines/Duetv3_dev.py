@@ -304,7 +304,7 @@ class Duet(torch.nn.Module):
 
         pred = F.softmax(y_out, dim=1)
 
-        return pred[0]
+        return pred
         # for t in pred:
         #     if t[0] > t[1]:
         #         ans.append(0)
