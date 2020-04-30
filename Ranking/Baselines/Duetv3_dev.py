@@ -289,14 +289,14 @@ class Duet(torch.nn.Module):
                                        nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
                                        nn.ReLU(),
                                        nn.Dropout(p=DROPOUT_RATE),
-                                       nn.Linear(NUM_HIDDEN_NODES, 1))
+                                       nn.Linear(NUM_HIDDEN_NODES, 2))
         self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
-    def predict(self, x):
-        ans = []
-        for t in x:
-                ans.append(t[1])
-        return torch.tensor(ans)
+    # def predict(self, x):
+    #     ans = []
+    #     for t in x:
+    #             ans.append(t[1])
+    #     return torch.tensor(ans)
 
         # for t in x:
         #     if t[0] > t[1]:
@@ -452,7 +452,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
             #         res_dev[q][d] = 0
             #     res_dev[q][d] += out[i][0]
 
-            _, predicted = torch.max(out.data, 1)
+            score, predicted = torch.max(out.data, 1)
 
             for i in range(meta_cnt):
                 q = features['meta'][i][0]
@@ -461,9 +461,12 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q] = {}
                 if d not in res_dev[q]:
                     res_dev[q][d] = 0
-                res_dev[q][d] += predicted[i]
 
-                print_message("dev  meta_cnt:{} predicted:{}".format(str(i), str(predicted[i])))
+                res_score = score if (predicted[i] == 1) else (1 - score)
+
+                res_dev[q][d] += res_score
+
+                print_message("dev  meta_cnt:{} predicted:{} res_score:{}".format(str(i), str(predicted[i]), res_score))
 
             is_complete = (meta_cnt < MB_SIZE)
 
