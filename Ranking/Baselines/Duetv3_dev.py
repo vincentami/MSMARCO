@@ -290,7 +290,7 @@ class Duet(torch.nn.Module):
                                        nn.ReLU(),
                                        nn.Dropout(p=DROPOUT_RATE),
                                        nn.Linear(NUM_HIDDEN_NODES, 2))
-        # self.scale = torch.tensor([0.1], requires_grad=False).to(device)
+        self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
     def forward(self, x_local, x_dist_q, x_dist_d, x_mask_q, x_mask_d):
         if ARCH_TYPE != 1:
@@ -303,7 +303,7 @@ class Duet(torch.nn.Module):
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
         pred = F.softmax(y_out)
-        return torch.tensor(pred[0])
+        return pred[0]*self.scale
 
         # for t in pred:
         #     if t[0] > t[1]:
