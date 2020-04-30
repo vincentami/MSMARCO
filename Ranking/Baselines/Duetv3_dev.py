@@ -388,7 +388,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
 
                 # print_message("out 1:{}".format(out[:,1]))
 
-                loss = criterion(out[:,1], torch.from_numpy(features['labels']).to(device))
+                loss = criterion(out, torch.from_numpy(features['labels']).to(device))
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
@@ -435,7 +435,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q] = {}
                 if d not in res_dev[q]:
                     res_dev[q][d] = 0
-                res_dev[q][d] += out[i][0]
+                res_dev[q][d] += (100 + out[i][1])
 
             is_complete = (meta_cnt < MB_SIZE)
 
