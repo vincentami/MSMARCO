@@ -403,7 +403,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
 
                 # score, predicted = torch.max(out.data, 1)
 
-                loss = criterion(out.data, torch.from_numpy(features['labels']).to(device))
+                loss = criterion(out, torch.from_numpy(features['labels']).to(device))
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
