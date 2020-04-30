@@ -466,7 +466,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
 
                 res_dev[q][d] += res_score
 
-                print_message("dev  meta_cnt:{} predicted:{} res_score:{}".format(str(i), str(predicted[i]), res_score))
+                # print_message("dev  meta_cnt:{} predicted:{} res_score:{}".format(str(i), str(predicted[i]), res_score))
 
             is_complete = (meta_cnt < MB_SIZE)
 
