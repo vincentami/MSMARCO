@@ -492,8 +492,8 @@ def goEval(res_dev, df_dev):
     df_rel = df_dev.__deepcopy__()
     adNdcgPrint(df_rel, 'sid', 'rel', 'label')
 
-    preArr = df_rel['rel'].values
-    labelArr = df_rel['label'].values
+    preArr = df_rel['rel'].values[1:]
+    labelArr = df_rel['label'].values[1:]
 
     print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
 
