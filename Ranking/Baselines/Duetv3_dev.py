@@ -538,7 +538,7 @@ def goEnvInit():
 
     devName = "cpu"
     if torch.cuda.is_available():
-        devName = "cuda:1"
+        devName = "cuda:0"
 
     device = torch.device(devName)
 
