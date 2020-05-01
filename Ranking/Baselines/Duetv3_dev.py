@@ -4,6 +4,7 @@ import os
 import os.path
 import csv
 import re
+from sklearn import  metrics
 import random
 import datetime
 import numpy as np
@@ -491,10 +492,12 @@ def goEval(res_dev, df_dev):
     df_rel = df_dev.__deepcopy__()
     adNdcgPrint(df_rel, 'sid', 'rel', 'label')
 
-    score = df_rel[1:,'rel']
-    label = df_rel[1:,'label']
+    preArr = df_rel['rel'].values
+    labelArr = df_rel['label'].values
 
-    print_message("score:type{} label:type{}".format(type(score), type(label)))
+    print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
+
+    print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
 
     df_org = df_dev.__deepcopy__()
     df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
