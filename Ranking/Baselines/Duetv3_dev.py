@@ -495,6 +495,14 @@ def goEval(res_dev, df_dev):
     preArr = df_rel['rel'].tolist()
     labelArr = df_rel['label'].tolist()
 
+    index = 0
+    for i in preArr:
+        if index < 10:
+            print_message("preArr index:{} :{}".format(index,i))
+            index = index + 1
+
+    
+
     print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
 
     print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
