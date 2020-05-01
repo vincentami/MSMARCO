@@ -491,6 +491,11 @@ def goEval(res_dev, df_dev):
     df_rel = df_dev.__deepcopy__()
     adNdcgPrint(df_rel, 'sid', 'rel', 'label')
 
+    score = df_rel[1:,'rel']
+    label = df_rel[1:,'label']
+
+    print_message("score:type{} label:type{}".format(type(score), type(label)))
+
     df_org = df_dev.__deepcopy__()
     df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
     adNdcgPrint(df_org, 'sid', 'index', 'label')
@@ -566,15 +571,15 @@ DROPOUT_RATE = 0.5
 # NUM_EPOCHS = 1
 # NUM_ENSEMBLES = 1
 
-# MB_SIZE = 1024
-# EPOCH_SIZE = 2
-# NUM_EPOCHS = 1
-# NUM_ENSEMBLES = 1
-
 MB_SIZE = 1024
-EPOCH_SIZE = 8192*2
-NUM_EPOCHS = 8
+EPOCH_SIZE = 8192
+NUM_EPOCHS = 1
 NUM_ENSEMBLES = 1
+
+# MB_SIZE = 1024
+# EPOCH_SIZE = 8192*2
+# NUM_EPOCHS = 8
+# NUM_ENSEMBLES = 1
 
 LEARNING_RATE = 0.001
 
