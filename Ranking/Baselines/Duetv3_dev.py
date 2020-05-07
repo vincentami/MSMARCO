@@ -290,7 +290,7 @@ class Duet(torch.nn.Module):
                                        nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
                                        nn.ReLU(),
                                        nn.Dropout(p=DROPOUT_RATE),
-                                       nn.Linear(NUM_HIDDEN_NODES, 2))
+                                       nn.Linear(NUM_HIDDEN_NODES, 1))
         self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
     # def predict(self, x):
@@ -316,11 +316,14 @@ class Duet(torch.nn.Module):
         y_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
-        pred = F.softmax(y_out, dim=1)
+        y_sig = torch.sigmoid(y_out)
+
+        # pred = F.softmax(y_out, dim=0)
 
         # print_message("y_out size:{} pred size:{} ".format(y_out.size(), pred.size()))
 
-        return pred
+        return y_sig
+
         # for t in pred:
         #     if t[0] > t[1]:
         #         ans.append(0)
@@ -445,35 +448,25 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
             if (loop_cnt %(1001) == 1):
                 print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
 
-            # out = out.data.cpu()
-            # for i in range(meta_cnt):
-            #     q = features['meta'][i][0]
-            #     d = features['meta'][i][1]
-            #     if q not in res_dev:
-            #         res_dev[q] = {}
-            #     if d not in res_dev[q]:
-            #         res_dev[q][d] = 0
-            #     res_dev[q][d] += out[i][0]
 
-            score, predicted = torch.max(out.data, 1)
+            # score, predicted = torch.max(out.data, 1)
 
             overCnt = 0
             for i in range(meta_cnt):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
 
-                res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
-
+                # res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
                 # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
 
                 if q not in res_dev:
                     res_dev[q] = {}
                 if d not in res_dev[q]:
                     res_dev[q][d] = 0
-                    res_dev[q][d] = res_score
+                    res_dev[q][d] = out.data[i]
                 else:
                     # print_message("dev  overlook q:{}  d:{}  score:{}".format(q, d, res_score))
-                    res_dev[q][d] = res_score
+                    res_dev[q][d] = out.data[i]
                     overCnt = overCnt + 1
 
             # print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
