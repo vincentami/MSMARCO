@@ -318,7 +318,7 @@ class Duet(torch.nn.Module):
 
         pred = F.softmax(y_out, dim=0)
 
-        print_message("y_out size:{} pred size:{} ".format(y_out.size(), pred.size()))
+        # print_message("y_out size:{} pred size:{} ".format(y_out.size(), pred.size()))
 
         return pred
         # for t in pred:
