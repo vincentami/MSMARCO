@@ -431,7 +431,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
             if (loop_cnt %(1001) == 1):
                 print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
 
-            score, predicted = torch.max(F.softmax(out, dim=1), 1)
+            score, predicted = torch.max(F.softmax(out.data, dim=1), 1)
             # score, predicted = torch.max(out.data, 1)
 
             overCnt = 0
