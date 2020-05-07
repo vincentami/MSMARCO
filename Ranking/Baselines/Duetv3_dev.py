@@ -316,7 +316,7 @@ class Duet(torch.nn.Module):
         y_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
-        pred = F.softmax(y_out, dim=1)
+        pred = F.softmax(y_out, dim=0)
 
         print_message("y_out size:{} pred size:{} ".format(y_out.size(), pred.size()))
 
@@ -455,7 +455,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
             #         res_dev[q][d] = 0
             #     res_dev[q][d] += out[i][0]
 
-            score, predicted = torch.max(out.data, 1)
+            score, predicted = torch.max(out.data, 0)
 
             overCnt = 0
             for i in range(meta_cnt):
@@ -464,19 +464,19 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
 
                 res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
 
-                # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
+                print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
 
                 if q not in res_dev:
                     res_dev[q] = {}
                 if d not in res_dev[q]:
                     res_dev[q][d] = 0
-                    res_dev[q][d] = score[i]
+                    res_dev[q][d] = res_score
                 else:
                     # print_message("dev  overlook q:{}  d:{}  score:{}".format(q, d, res_score))
-                    res_dev[q][d] = score[i]
+                    res_dev[q][d] = res_score
                     overCnt = overCnt + 1
 
-            print_message("dev  meta_cnt:{} overCnt:{}".format( meta_cnt, overCnt))
+            print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
 
             is_complete = (meta_cnt < MB_SIZE)
 
