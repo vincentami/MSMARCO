@@ -526,10 +526,7 @@ def goEval(res_dev, df_dev):
     #     if item > 1 :
     #         print_message("score:{}".format(item))
     #
-    for item in labelArr:
-        if item(1) != 1 and item(1) != 0 :
-            print_message("label:{}".format(item(1)))
-
+    
     print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
     print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
 
