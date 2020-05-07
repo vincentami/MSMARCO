@@ -460,24 +460,18 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
 
-                # print_message("score:{} type:{} len:{} predicted:{} type:{} len:{}".format(score, type(score), len(score), predicted, type(predicted), len(predicted)))
-
                 res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
 
-                print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
-                #
-                # if q not in res_dev:
-                #     res_dev[q] = {}
-                # if d not in res_dev[q]:
-                #     res_dev[q][d] = 0
-                #     res_dev[q][d] = score[i]
-                # else:
-                #     res_dev[q][d] = score[i]
+                # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
 
-                # res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
-                # res_score = score[i]
-                #
-                # res_dev[q][d] = res_score
+                if q not in res_dev:
+                    res_dev[q] = {}
+                if d not in res_dev[q]:
+                    res_dev[q][d] = 0
+                    res_dev[q][d] = score[i]
+                else:
+                    print_message("dev  overlook q:{}  d:{}  score:{}".format(q, d, res_score))
+                    res_dev[q][d] = score[i]
 
             print_message("dev  meta_cnt:{} overCnt:{}".format( meta_cnt, overCnt))
 
