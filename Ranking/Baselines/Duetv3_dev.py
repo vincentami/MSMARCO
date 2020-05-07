@@ -460,7 +460,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
 
-                print_message("score:{} type:{} predicted:{} type:{}".format(score, type(score), predicted, type(predicted)))
+                print_message("score:{} type:{} len:{} predicted:{} type:{} len:{}".format(score, type(score), len(score), predicted, type(predicted), len(predicted)))
 
                 res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
 
