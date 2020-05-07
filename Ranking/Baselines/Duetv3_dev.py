@@ -459,14 +459,16 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
             for i in range(meta_cnt):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
-                if q not in res_dev:
-                    res_dev[q] = {}
-                if d not in res_dev[q]:
-                    res_dev[q][d] = 0
-                    res_dev[q][d] = score[i]
-                else:
-                    overCnt = overCnt + 1
-                    res_dev[q][d] = score[i]
+
+                print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, score[i]))
+                #
+                # if q not in res_dev:
+                #     res_dev[q] = {}
+                # if d not in res_dev[q]:
+                #     res_dev[q][d] = 0
+                #     res_dev[q][d] = score[i]
+                # else:
+                #     res_dev[q][d] = score[i]
 
                 # res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
                 # res_score = score[i]
