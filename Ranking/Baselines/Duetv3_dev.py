@@ -316,7 +316,7 @@ class Duet(torch.nn.Module):
         y_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
-        pred = F.softmax(y_out, dim=0)
+        pred = F.softmax(y_out, dim=1)
 
         # print_message("y_out size:{} pred size:{} ".format(y_out.size(), pred.size()))
 
@@ -526,7 +526,7 @@ def goEval(res_dev, df_dev):
     #     if item > 1 :
     #         print_message("score:{}".format(item))
     #
-    
+
     print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
     print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
 
