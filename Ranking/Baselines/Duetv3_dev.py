@@ -511,14 +511,14 @@ def goEval(res_dev, df_dev):
     df_new = pd.concat([df_dev, a_pd], axis=1)
 
     df_new.sort_values(by=['sid', 'score'], ascending=False, inplace=True)
-    adNdcgPrint(df_new, 'sid', 'score', 'label')
+    # adNdcgPrint(df_new, 'sid', 'score', 'label')
 
     preArr = df_new['score'].tolist()
     labelArr = df_new['label'].tolist()
 
     for item in preArr:
         if item > 1 :
-            print_message("score:{}".format(item()))
+            print_message("score:{}".format(item))
 
     print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
     print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
