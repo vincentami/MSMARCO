@@ -501,20 +501,11 @@ def goEval(res_dev, df_dev):
     df_rel = df_dev.__deepcopy__()
     adNdcgPrint(df_rel, 'sid', 'rel', 'label')
 
-    preArr = df_rel['rel'].tolist()
-    labelArr = df_rel['label'].tolist()
+    # preArr = df_rel['rel'].tolist()
+    # labelArr = df_rel['label'].tolist()
 
-    index = 0
-    for i in preArr:
-        if index < 10:
-            print_message("preArr index:{} :{}".format(index,i))
-            index = index + 1
-
-    
-
-    print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
-
-    print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
+    # print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
+    # print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
 
     df_org = df_dev.__deepcopy__()
     df_org.sort_values(by=['sid', 'index'], ascending=True, inplace=True)
@@ -527,6 +518,12 @@ def goEval(res_dev, df_dev):
 
     df_new.sort_values(by=['sid', 'score'], ascending=False, inplace=True)
     adNdcgPrint(df_new, 'sid', 'score', 'label')
+
+    preArr = df_new['score'].tolist()
+    labelArr = df_new['label'].tolist()
+
+    print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
+    print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
 
     # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
     #
