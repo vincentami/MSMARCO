@@ -316,7 +316,7 @@ class Duet(torch.nn.Module):
         y_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
-        pred = F.softmax(y_out, dim=0)
+        pred = F.softmax(y_out, dim=1)
 
         # print_message("y_out size:{} pred size:{} ".format(y_out.size(), pred.size()))
 
@@ -476,7 +476,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q][d] = res_score
                     overCnt = overCnt + 1
 
-            # print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
+            print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
 
             is_complete = (meta_cnt < MB_SIZE)
 
