@@ -316,30 +316,13 @@ class Duet(torch.nn.Module):
         y_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
-        y_sig = torch.sigmoid(y_out)
+        # y_sig = torch.sigmoid(y_out)
 
         # pred = F.softmax(y_out, dim=0)
 
         # print_message("y_out size:{} pred size:{} ".format(y_out.size(), pred.size()))
 
-        return y_sig
-
-        # for t in pred:
-        #     if t[0] > t[1]:
-        #         ans.append(0)
-        #     else:
-        #         ans.append(1)
-        # return torch.tensor(ans)
-
-    # def predict(self,x):
-    #     ans = []
-    #     pred = F.softmax(self.forward(x))
-    #     for t in pred:
-    #         if t[0] > t[1]:
-    #             ans.append(0)
-    #         else:
-    #             ans.append(1)
-    #     return torch.tensor(ans)
+        return y_out
 
     def parameter_count(self):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
@@ -448,7 +431,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
             if (loop_cnt %(1001) == 1):
                 print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
 
-
+            score, predicted = torch.max(F.softmax(out), 1)
             # score, predicted = torch.max(out.data, 1)
 
             overCnt = 0
@@ -456,17 +439,17 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
 
-                # res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
+                res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
                 # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
 
                 if q not in res_dev:
                     res_dev[q] = {}
                 if d not in res_dev[q]:
                     res_dev[q][d] = 0
-                    res_dev[q][d] = out.data[i]
+                    res_dev[q][d] = res_score
                 else:
                     # print_message("dev  overlook q:{}  d:{}  score:{}".format(q, d, res_score))
-                    res_dev[q][d] = out.data[i]
+                    res_dev[q][d] = res_score
                     overCnt = overCnt + 1
 
             # print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
