@@ -455,6 +455,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
 
             score, predicted = torch.max(out.data, 1)
 
+            overCnt = 0
             for i in range(meta_cnt):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
@@ -462,13 +463,17 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q] = {}
                 if d not in res_dev[q]:
                     res_dev[q][d] = 0
+                    res_dev[q][d] = score[i]
+                else:
+                    overCnt = overCnt + 1
+                    res_dev[q][d] = score[i]
 
                 # res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
-                res_score = score[i]
+                # res_score = score[i]
+                #
+                # res_dev[q][d] = res_score
 
-                res_dev[q][d] += res_score
-
-                # print_message("dev  meta_cnt:{} predicted:{} res_score:{}".format(str(i), str(predicted[i]), res_score))
+            print_message("dev  meta_cnt:{} overCnt:{}".format( meta_cnt, overCnt))
 
             is_complete = (meta_cnt < MB_SIZE)
 
