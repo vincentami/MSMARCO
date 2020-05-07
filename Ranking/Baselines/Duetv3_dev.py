@@ -476,7 +476,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q][d] = res_score
                     overCnt = overCnt + 1
 
-            print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
+            # print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
 
             is_complete = (meta_cnt < MB_SIZE)
 
@@ -519,6 +519,10 @@ def goEval(res_dev, df_dev):
     for item in preArr:
         if item > 1 :
             print_message("score:{}".format(item))
+
+    for item in labelArr:
+        if item != 1 and item != 0 :
+            print_message("label:{}".format(item))
 
     print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
     print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
