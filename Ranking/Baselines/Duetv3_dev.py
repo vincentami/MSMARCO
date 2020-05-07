@@ -455,7 +455,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
             #         res_dev[q][d] = 0
             #     res_dev[q][d] += out[i][0]
 
-            score, predicted = torch.max(out.data, 0)
+            score, predicted = torch.max(out.data, 1)
 
             overCnt = 0
             for i in range(meta_cnt):
