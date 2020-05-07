@@ -520,15 +520,15 @@ def goEval(res_dev, df_dev):
     # adNdcgPrint(df_new, 'sid', 'score', 'label')
 
     preArr = df_new['score'].tolist()
-    labelArr = map(getLabel, df_new['label'].tolist())
+    labelArr = list(map(getLabel, df_new['label'].tolist()))
 
     # for item in preArr:
     #     if item > 1 :
     #         print_message("score:{}".format(item))
     #
     for item in labelArr:
-        if item != 1 and item != 0 :
-            print_message("label:{}".format(item))
+        if item(1) != 1 and item(1) != 0 :
+            print_message("label:{}".format(item(1)))
 
     print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
     print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
