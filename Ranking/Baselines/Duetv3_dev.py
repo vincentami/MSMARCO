@@ -495,6 +495,12 @@ def getScore(sid, index, res_dev):
 
     return score
 
+def getLabel(x):
+    if x > 2:
+        return 1
+    else:
+        return 0
+
 def goEval(res_dev, df_dev):
     print_message('Start Inference')
 
@@ -514,12 +520,12 @@ def goEval(res_dev, df_dev):
     # adNdcgPrint(df_new, 'sid', 'score', 'label')
 
     preArr = df_new['score'].tolist()
-    labelArr = df_new['label'].tolist()
+    labelArr = map(getLabel, df_new['label'].tolist())
 
-    for item in preArr:
-        if item > 1 :
-            print_message("score:{}".format(item))
-
+    # for item in preArr:
+    #     if item > 1 :
+    #         print_message("score:{}".format(item))
+    #
     for item in labelArr:
         if item != 1 and item != 0 :
             print_message("label:{}".format(item))
