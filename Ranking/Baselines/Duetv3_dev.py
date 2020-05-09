@@ -497,9 +497,9 @@ def goEval(res_dev, df_dev):
 
     y_pred = map(lambda x: 1 if x > 0.5 else 0, preArr)
 
-    print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
+    # print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
 
-    print_message("%s", classification_report(labelArr, y_pred))
+    print(classification_report(labelArr, y_pred))
 
     print_message("######################################")
 
