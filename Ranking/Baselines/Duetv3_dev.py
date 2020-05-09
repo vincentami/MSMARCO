@@ -431,13 +431,14 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
             if (loop_cnt %(1001) == 1):
                 print_message("dev  meta_cnt:{} loop:{}".format(str(meta_cnt), str(loop_cnt)))
 
-            score, predicted = torch.max(F.softmax(out.data, dim=1), 1)
             # score, predicted = torch.max(out.data, 1)
 
             overCnt = 0
             for i in range(meta_cnt):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
+
+                score, predicted = torch.max(F.softmax(out.data[i], dim=1), 1)
 
                 res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
                 # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
