@@ -304,13 +304,13 @@ class Duet(torch.nn.Module):
         y_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
-        y_sig = torch.sigmoid(y_out)
+        # y_sig = torch.sigmoid(y_out)
 
         # pred = F.softmax(y_out, dim=0)
 
         # print_message("y_out size:{} pred size:{} ".format(y_out.size(), pred.size()))
 
-        return y_sig
+        return y_out
 
     def parameter_count(self):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
@@ -434,7 +434,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 #
                 # res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
                 # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
-                res_score = out.data[i]
+                res_score = torch.sigmoid(out.data[i])
 
                 if q not in res_dev:
                     res_dev[q] = {}
