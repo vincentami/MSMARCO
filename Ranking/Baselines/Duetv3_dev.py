@@ -4,7 +4,6 @@ import os
 import os.path
 import csv
 import re
-from sklearn import  metrics
 import random
 import datetime
 import numpy as np
@@ -18,6 +17,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+import sklearn.metrics as metrics
 
 def print_message(s):
     print("[{}] {}".format(datetime.datetime.utcnow().strftime("%b %d, %H:%M:%S"), s), flush=True)
@@ -499,11 +499,11 @@ def goEval(res_dev, df_dev):
 
     # print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
 
-    classification_report(labelArr, y_pred)
+    print(metrics.classification_report(labelArr, y_pred))
 
     print_message("######################################")
 
-    confusion_matrix(labelArr, y_pred)
+    print(metrics.confusion_matrix(labelArr, y_pred))
 
     # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
     #
