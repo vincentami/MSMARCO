@@ -446,7 +446,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q][d] = res_score
                     overCnt = overCnt + 1
 
-            print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
+            # print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
 
             is_complete = (meta_cnt < MB_SIZE)
 
@@ -564,7 +564,7 @@ DROPOUT_RATE = 0.5
 # NUM_ENSEMBLES = 1
 
 MB_SIZE = 1024
-EPOCH_SIZE = 512
+EPOCH_SIZE = 51200
 NUM_EPOCHS = 1
 NUM_ENSEMBLES = 1
 
