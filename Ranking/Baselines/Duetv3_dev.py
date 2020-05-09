@@ -487,7 +487,7 @@ def goEval(res_dev, df_dev):
     df_new = pd.concat([df_dev, a_pd], axis=1)
 
     df_new.sort_values(by=['sid', 'score'], ascending=False, inplace=True)
-    # adNdcgPrint(df_new, 'sid', 'score', 'label')
+    adNdcgPrint(df_new, 'sid', 'score', 'label')
 
     preArr = df_new['score'].tolist()
     labelArr = list(map(getLabel, df_new['label'].tolist()))
@@ -558,7 +558,7 @@ DROPOUT_RATE = 0.5
 # NUM_ENSEMBLES = 1
 
 MB_SIZE = 1024
-EPOCH_SIZE = 512*8
+EPOCH_SIZE = 512*1
 NUM_EPOCHS = 1
 NUM_ENSEMBLES = 1
 
