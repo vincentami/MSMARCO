@@ -290,21 +290,9 @@ class Duet(torch.nn.Module):
                                        nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
                                        nn.ReLU(),
                                        nn.Dropout(p=DROPOUT_RATE),
-                                       nn.Linear(NUM_HIDDEN_NODES, 2))
+                                       nn.Linear(NUM_HIDDEN_NODES, 1))
         self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
-    # def predict(self, x):
-    #     ans = []
-    #     for t in x:
-    #             ans.append(t[1])
-    #     return torch.tensor(ans)
-
-        # for t in x:
-        #     if t[0] > t[1]:
-        #         ans.append(0)
-        #     else:
-        #         ans.append(1)
-        # return torch.tensor(ans)
 
     def forward(self, x_local, x_dist_q, x_dist_d, x_mask_q, x_mask_d):
         if ARCH_TYPE != 1:
@@ -316,13 +304,13 @@ class Duet(torch.nn.Module):
         y_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
-        # y_sig = torch.sigmoid(y_out)
+        y_sig = torch.sigmoid(y_out)
 
         # pred = F.softmax(y_out, dim=0)
 
         # print_message("y_out size:{} pred size:{} ".format(y_out.size(), pred.size()))
 
-        return y_out
+        return y_sig
 
     def parameter_count(self):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
@@ -438,14 +426,15 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
 
-                print_message("meta_cnt:{} data.size:{}  score:{} softmax:{} softmax.size:{}"
-                              .format(i,  out.data[i].size(), out.data[i],
-                                      F.softmax(out.data[i], dim=0), F.softmax(out.data[i], dim=0).size() ))
-
-                score, predicted = torch.max(F.softmax(out.data[i], dim=0), 0)
-
-                res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
+                # print_message("meta_cnt:{} data.size:{}  score:{} softmax:{} softmax.size:{}"
+                #               .format(i,  out.data[i].size(), out.data[i],
+                #                       F.softmax(out.data[i], dim=0), F.softmax(out.data[i], dim=0).size() ))
+                #
+                # score, predicted = torch.max(F.softmax(out.data[i], dim=0), 0)
+                #
+                # res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
                 # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
+                res_score = out.data[i]
 
                 if q not in res_dev:
                     res_dev[q] = {}
@@ -457,7 +446,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q][d] = res_score
                     overCnt = overCnt + 1
 
-            # print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
+            print_message("dev  meta_cnt:{} overCnt:{} ".format( meta_cnt, overCnt))
 
             is_complete = (meta_cnt < MB_SIZE)
 
