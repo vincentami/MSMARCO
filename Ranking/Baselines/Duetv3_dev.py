@@ -492,12 +492,6 @@ def goEval(res_dev, df_dev):
     preArr = df_new['score'].tolist()
     labelArr = list(map(getLabel, df_new['label'].tolist()))
 
-    # for item in preArr:
-    #     if item > 1 :
-    #         print_message("score:{}".format(item))
-    #
-
-    print_message("score:type{} label:type{}".format(type(preArr), type(labelArr)))
     print("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
 
     # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
@@ -564,7 +558,7 @@ DROPOUT_RATE = 0.5
 # NUM_ENSEMBLES = 1
 
 MB_SIZE = 1024
-EPOCH_SIZE = 512
+EPOCH_SIZE = 512*8
 NUM_EPOCHS = 1
 NUM_ENSEMBLES = 1
 
