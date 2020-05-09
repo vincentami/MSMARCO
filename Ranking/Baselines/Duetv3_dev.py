@@ -438,7 +438,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
 
-                print_message("meta_cnt:{} data.size:{}  score:{}".format(i,  out.data[i].size, out.data[i]))
+                print_message("meta_cnt:{} data.size:{}  score:{}".format(i,  out.data[i].size(), out.data[i]))
 
                 score, predicted = torch.max(out.data[i], 1)
 
