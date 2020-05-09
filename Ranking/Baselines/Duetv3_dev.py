@@ -439,7 +439,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 d = features['meta'][i][1]
 
                 print_message("meta_cnt:{} data.size:{}  score:{} softmax:{} softmax.size:{}"
-                              .format(i,  out.data[i].size(), out.data[i], F.softmax(out.data[i], dim=0), F.softmax(out.data[i], dim=0).size() ))
+                              .format(i,  out.data[i].shape(), out.data[i], F.softmax(out.data[i], dim=0), F.softmax(out.data[i], dim=0).shape() ))
 
                 score, predicted = torch.max(F.softmax(out.data[i], dim=0), 0)
 
