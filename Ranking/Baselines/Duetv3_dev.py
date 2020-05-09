@@ -440,7 +440,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
 
                 print_message("meta_cnt:{} data.size:{}  score:{}".format(i,  out.data[i].size(), out.data[i]))
 
-                score, predicted = torch.max(out.data[i], 1)
+                score, predicted = torch.max(F.softmax(out.data[i], dim=0), 0)
 
                 res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
                 # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
