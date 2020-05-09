@@ -499,11 +499,13 @@ def goEval(res_dev, df_dev):
 
     # print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
 
-    print(metrics.classification_report(labelArr, y_pred))
+    ret = metrics.classification_report(labelArr, y_pred)
+    print(type(ret))
 
     print_message("######################################")
 
-    print(metrics.confusion_matrix(labelArr, y_pred))
+    ret = metrics.confusion_matrix(labelArr, y_pred)
+    print(type(ret))
 
     # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
     #
