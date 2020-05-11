@@ -291,7 +291,8 @@ class Duet(torch.nn.Module):
                                        nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
                                        nn.ReLU(),
                                        nn.Dropout(p=DROPOUT_RATE),
-                                       nn.Linear(NUM_HIDDEN_NODES, 1))
+                                       nn.Linear(NUM_HIDDEN_NODES, 1),
+                                       nn.ReLU())
         self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
 
@@ -423,6 +424,8 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
             # score, predicted = torch.max(out.data, 1)
 
             overCnt = 0
+            cout = out.data.cpu()
+
             for i in range(meta_cnt):
                 q = features['meta'][i][0]
                 d = features['meta'][i][1]
@@ -435,7 +438,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 #
                 # res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
                 # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
-                res_score = torch.sigmoid(out.data[i])
+                res_score = torch.sigmoid(cout[i][0])
 
                 if q not in res_dev:
                     res_dev[q] = {}
