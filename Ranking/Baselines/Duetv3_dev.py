@@ -438,8 +438,10 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 #
                 # res_score = score[i] if (predicted[i] == 1) else (1 - score[i])
                 # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
-                res_score = torch.sigmoid(cout[i][0])
+                # res_score = torch.sigmoid(cout[i][0])
 
+                res_score =  cout[i][0]
+                
                 if q not in res_dev:
                     res_dev[q] = {}
                 if d not in res_dev[q]:
