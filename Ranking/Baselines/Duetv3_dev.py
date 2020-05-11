@@ -440,7 +440,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 # print_message("dev  meta_cnt:{} q:{}  d:{}  score:{}".format(i, q, d, res_score))
                 # res_score = torch.sigmoid(cout[i][0])
 
-                res_score =  cout[i][0]
+                res_score =  torch.sigmoid(cout[i][0])
 
                 if q not in res_dev:
                     res_dev[q] = {}
@@ -448,7 +448,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q][d] = 0
                     res_dev[q][d] = res_score
                 else:
-                    print_message("dev  overlook q:{}  d:{}  score:{}".format(q, d, res_score))
+                    # print_message("dev  overlook q:{}  d:{}  score:{}".format(q, d, res_score))
                     res_dev[q][d] = res_score
                     overCnt = overCnt + 1
 
