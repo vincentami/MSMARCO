@@ -500,7 +500,7 @@ def goEval(res_dev, df_dev):
 
     print_message("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
 
-    y_pred = list(map(lambda x: 1 if x > 0.5 else 0, preArr))
+    y_pred = list(map(lambda x: 1 if x > 0.8 else 0, preArr))
 
     print(type(y_pred))
     # print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
@@ -577,7 +577,7 @@ DROPOUT_RATE = 0.5
 # NUM_ENSEMBLES = 1
 
 MB_SIZE = 1024
-EPOCH_SIZE = 512*8
+EPOCH_SIZE = 512*16
 NUM_EPOCHS = 1
 NUM_ENSEMBLES = 1
 
