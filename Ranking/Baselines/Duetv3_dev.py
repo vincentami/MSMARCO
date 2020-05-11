@@ -501,11 +501,10 @@ def goEval(res_dev, df_dev):
     print_message("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
 
     ymap = map(lambda x: 1 if x > 0.9 else 0, preArr)
-    print_message("len:{} ,type:{}".format(len(ymap), type(ymap)))
 
-    y_pred = list(ymap)
+    y_pred = list(ymap.values())
 
-    print_message("len:{} ,type:{}".format(len(y_pred), type(y_pred)))
+    print_message("len:{} ,type:{} typeone:{}".format(len(y_pred), type(y_pred), y_pred(1)))
 
     # print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
 
