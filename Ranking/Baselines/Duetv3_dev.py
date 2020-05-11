@@ -502,6 +502,11 @@ def goEval(res_dev, df_dev):
 
     y_pred = list(map(lambda x: 1 if float(x) > 0.9995 else 0, preArr))
 
+    y_max = sorted(y_pred)
+    y_min = sorted(y_pred, reverse= True)
+
+    print_message("Top10 :{}  tail10:{}".format(y_max[:10], y_min[:10]))
+
     print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
 
     ret = metrics.classification_report(labelArr, y_pred)
