@@ -448,7 +448,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                     res_dev[q][d] = 0
                     res_dev[q][d] = res_score
                 else:
-                    # print_message("dev  overlook q:{}  d:{}  score:{}".format(q, d, res_score))
+                    print_message("dev  overlook q:{}  d:{}  score:{}".format(q, d, res_score))
                     res_dev[q][d] = res_score
                     overCnt = overCnt + 1
 
