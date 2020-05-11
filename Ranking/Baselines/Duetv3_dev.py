@@ -441,7 +441,7 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 # res_score = torch.sigmoid(cout[i][0])
 
                 res_score =  cout[i][0]
-                
+
                 if q not in res_dev:
                     res_dev[q] = {}
                 if d not in res_dev[q]:
@@ -577,7 +577,7 @@ DROPOUT_RATE = 0.5
 # NUM_ENSEMBLES = 1
 
 MB_SIZE = 1024
-EPOCH_SIZE = 512*1
+EPOCH_SIZE = 512*8
 NUM_EPOCHS = 1
 NUM_ENSEMBLES = 1
 
