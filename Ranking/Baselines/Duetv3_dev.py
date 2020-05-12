@@ -482,20 +482,20 @@ def printMetric(labelArr, preArr, bar):
     print_message("######################################   printMetric   ######## barrier:{}".format(bar))
 
     y_pred = list(map(lambda x: 1 if float(x) > 0.8 else 0, preArr))
-    print_message("Accuracy 0.8 :{}".format(metrics.accuracy_score(labelArr, y_pred)))
+    print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
 
     y_pred = list(map(lambda x: 1 if float(x) > 0.7 else 0, preArr))
-    print_message("Accuracy 0.8 :{}".format(metrics.accuracy_score(labelArr, y_pred)))
+    print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
 
     y_pred = list(map(lambda x: 1 if float(x) > 0.6 else 0, preArr))
-    print_message("Accuracy 0.8 :{}".format(metrics.accuracy_score(labelArr, y_pred)))
+    print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
 
     ret = metrics.classification_report(labelArr, y_pred)
     print(ret)
 
     print_message("######################################")
 
-    ret = metrics.confusion_matrix(labelArr, y_pred)
+    ret = metrics.confussion_matrix(labelArr, y_pred)
     print(ret)
 
 
@@ -523,7 +523,13 @@ def goEval(res_dev, df_dev):
     olist = sum(list(filter(lambda x: 1 if float(x) > 0.99999  else 0, preArr)))
     zlist = sum(list(filter(lambda x: 1 if float(x) == 0.0  else 0, preArr)))
 
-    print_message("AUC Score (Train): {}  zsize:{}  onesize:{}".format(metrics.roc_auc_score(labelArr, preArr), zlist, olist))
+    list8 = sum(list(filter(lambda x: 1 if float(x) > 0.8  else 0, preArr)))
+    list7 = sum(list(filter(lambda x: 1 if float(x) > 0.7  else 0, preArr)))
+    list6 = sum(list(filter(lambda x: 1 if float(x) > 0.6  else 0, preArr)))
+
+
+    print_message("AUC Score (Train): {}  zsize:{}  onesize:{} list8:{} list7:{} list6:{} "
+                  .format(metrics.roc_auc_score(labelArr, preArr), zlist, olist, list8, list7, list6))
 
     printMetric(labelArr, preArr, 0.8)
 
