@@ -481,13 +481,7 @@ def printMetric(labelArr, preArr, bar):
 
     print_message("######################################   printMetric   ######## barrier:{}".format(bar))
 
-    y_pred = list(map(lambda x: 1 if float(x) > 0.8 else 0, preArr))
-    print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
-
-    y_pred = list(map(lambda x: 1 if float(x) > 0.7 else 0, preArr))
-    print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
-
-    y_pred = list(map(lambda x: 1 if float(x) > 0.6 else 0, preArr))
+    y_pred = list(map(lambda x: 1 if float(x) > bar else 0, preArr))
     print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
 
     ret = metrics.classification_report(labelArr, y_pred)
