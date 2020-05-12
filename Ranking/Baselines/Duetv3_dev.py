@@ -509,7 +509,7 @@ def goEval(res_dev, df_dev):
     df_new = pd.concat([df_dev, a_pd], axis=1)
 
     df_new.sort_values(by=['sid', 'score'], ascending=False, inplace=True)
-    # adNdcgPrint(df_new, 'sid', 'score', 'label')
+    adNdcgPrint(df_new, 'sid', 'score', 'label')
 
     preArr = df_new['score'].tolist()
     labelArr = list(map(getLabel, df_new['label'].tolist()))
