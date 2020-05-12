@@ -495,7 +495,7 @@ def printMetric(labelArr, preArr, bar):
 
     print_message("######################################")
 
-    ret = metrics.confussion_matrix(labelArr, y_pred)
+    ret = metrics.confusion_matrix(labelArr, y_pred)
     print(ret)
 
 
