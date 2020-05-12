@@ -477,6 +477,28 @@ def getLabel(x):
     else:
         return 0
 
+def printMetric(labelArr, preArr, bar):
+
+    print_message("######################################   printMetric   ######## barrier:{}".format(bar))
+
+    y_pred = list(map(lambda x: 1 if float(x) > 0.8 else 0, preArr))
+    print_message("Accuracy 0.8 :{}".format(metrics.accuracy_score(labelArr, y_pred)))
+
+    y_pred = list(map(lambda x: 1 if float(x) > 0.7 else 0, preArr))
+    print_message("Accuracy 0.8 :{}".format(metrics.accuracy_score(labelArr, y_pred)))
+
+    y_pred = list(map(lambda x: 1 if float(x) > 0.6 else 0, preArr))
+    print_message("Accuracy 0.8 :{}".format(metrics.accuracy_score(labelArr, y_pred)))
+
+    ret = metrics.classification_report(labelArr, y_pred)
+    print(ret)
+
+    print_message("######################################")
+
+    ret = metrics.confusion_matrix(labelArr, y_pred)
+    print(ret)
+
+
 def goEval(res_dev, df_dev):
     print_message('Start Inference')
 
@@ -498,24 +520,17 @@ def goEval(res_dev, df_dev):
     preArr = df_new['score'].tolist()
     labelArr = list(map(getLabel, df_new['label'].tolist()))
 
-    print_message("AUC Score (Train): {}".format(metrics.roc_auc_score(labelArr, preArr)))
+    olist = sum(list(filter(lambda x: 1 if float(x) > 0.99999  else 0, preArr)))
+    zlist = sum(list(filter(lambda x: 1 if float(x) == 0.0  else 0, preArr)))
 
-    y_pred = list(map(lambda x: 1 if float(x) > 0.9995 else 0, preArr))
+    print_message("AUC Score (Train): {}  zsize:{}  onesize:{}".format(metrics.roc_auc_score(labelArr, preArr), zlist, olist))
 
-    y_max = sorted(y_pred)
-    y_min = sorted(y_pred, reverse= True)
+    printMetric(labelArr, preArr, 0.8)
 
-    print_message("Top10 :{}  tail10:{}".format(y_max[:10], y_min[:10]))
+    printMetric(labelArr, preArr, 0.7)
 
-    print_message("Accuracy :{}".format(metrics.accuracy_score(labelArr, y_pred)))
+    printMetric(labelArr, preArr, 0.6)
 
-    ret = metrics.classification_report(labelArr, y_pred)
-    print(ret)
-
-    print_message("######################################")
-
-    ret = metrics.confusion_matrix(labelArr, y_pred)
-    print(ret)
 
     # df_new.sort_values(by=['sid', 'score'] , ascending=False, inplace=True)
     #
