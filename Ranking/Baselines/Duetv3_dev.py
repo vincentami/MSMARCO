@@ -291,8 +291,7 @@ class Duet(torch.nn.Module):
                                        nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
                                        nn.ReLU(),
                                        nn.Dropout(p=DROPOUT_RATE),
-                                       nn.Linear(NUM_HIDDEN_NODES, 1),
-                                       nn.ReLU())
+                                       nn.Linear(NUM_HIDDEN_NODES, 1))
         self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
 
