@@ -525,6 +525,8 @@ def goEval(res_dev, df_dev):
     print_message("AUC Score (Train): {}  zsize:{}  onesize:{} list8:{} list7:{} list6:{} "
                   .format(metrics.roc_auc_score(labelArr, preArr), zlist, olist, list8, list7, list6))
 
+    printMetric(labelArr, preArr, 0.9)
+
     printMetric(labelArr, preArr, 0.8)
 
     printMetric(labelArr, preArr, 0.7)
@@ -596,7 +598,7 @@ DROPOUT_RATE = 0.5
 # NUM_ENSEMBLES = 1
 
 MB_SIZE = 1024
-EPOCH_SIZE = 512*2
+EPOCH_SIZE = 512*16
 NUM_EPOCHS = 1
 NUM_ENSEMBLES = 1
 
