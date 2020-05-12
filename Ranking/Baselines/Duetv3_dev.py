@@ -292,7 +292,9 @@ class Duet(torch.nn.Module):
                                        nn.ReLU(),
                                        nn.Dropout(p=DROPOUT_RATE),
                                        nn.Linear(NUM_HIDDEN_NODES, 1),
-                                       nn.Sigmoid())
+                                       nn.ReLU())
+                                       # nn.Sigmoid())
+
         self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
 
@@ -441,7 +443,8 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                 # res_score = torch.sigmoid(cout[i][0])
 
                 # res_score =  torch.sigmoid(cout[i][0])
-                res_score = cout[i][0]
+                res_score =  torch.sigmoid(cout[i][0] - 0.5)
+                # res_score = cout[i][0]
 
                 if q not in res_dev:
                     res_dev[q] = {}
