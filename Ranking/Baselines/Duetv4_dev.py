@@ -182,6 +182,7 @@ class DataReader:
         for i in range(self.num_docs):
             if ARCH_TYPE != 1:
                 self.features['local'].append(np.zeros((MB_SIZE, MAX_DOC_TERMS, MAX_QUERY_TERMS), dtype=np.float32))
+                self.features['attr'].append(np.zeros((MB_SIZE, MAX_ATTENTION_WIDTH), dtype=np.float32))
             if ARCH_TYPE > 0:
                 self.features['dist_d'].append(np.zeros((MB_SIZE, MAX_DOC_TERMS), dtype=np.int64))
                 self.features['mask_d'].append(np.zeros((MB_SIZE, MAX_DOC_TERMS, 1), dtype=np.float32))
@@ -195,10 +196,19 @@ class DataReader:
         for i in range(self.num_docs):
             if ARCH_TYPE != 1:
                 self.features['local'][i].fill(np.float32(0))
+                self.features['attr'][i].fill(np.float32(0))
             if ARCH_TYPE > 0:
                 self.features['dist_d'][i].fill(np.int64(0))
                 self.features['mask_d'][i].fill(np.float32(0))
         self.features['meta'].clear()
+
+    def transAttr(self, attrStr, max_len):
+        attrList = attrStr.split(",")
+        attrFloat = list(map(lambda x: float(x), attrList))
+        attrLen = len(attrFloat)
+        attrMax = list( attrFloat.extend(0.0 for _ in range(max_len - attrLen)) )
+
+        return tuple(attrMax)
 
     def get_minibatch(self):
         self.__clear_minibatch()
@@ -213,6 +223,11 @@ class DataReader:
             cols = row.split('\t')
             q = self.__tokenize(cols[self.num_meta_cols], MAX_QUERY_TERMS)
             ds = [self.__tokenize(cols[self.num_meta_cols + i + 1], MAX_DOC_TERMS) for i in range(self.num_docs)]
+            attrList = [cols[self.num_meta_cols + self.num_docs:]]
+
+            for d in range(len(self.num_docs)):
+                self.features['attr'][d] = self.transAttr(attrList[d], MAX_ATTENTION_WIDTH)
+
             if ARCH_TYPE != 1:
                 for d in range(self.num_docs):
                     for j in range(len(ds[d])):
@@ -254,6 +269,14 @@ class Duet(torch.nn.Module):
         super(Duet, self).__init__()
         self.embed = nn.Embedding(VOCAB_SIZE, NUM_HIDDEN_NODES)
         self.embed.weight = nn.Parameter(READER_TRAIN.pre_trained_embeddings, requires_grad=True)
+
+        self.duet_attr = nn.Sequential(nn.Linear(MAX_ATTENTION_WIDTH, NUM_HIDDEN_NODES),
+                                       nn.ReLU(),
+                                       nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
+                                       nn.ReLU(),
+                                       nn.Dropout(p=DROPOUT_RATE)
+                                       )
+
         self.duet_local = nn.Sequential(nn.Conv1d(MAX_DOC_TERMS, NUM_HIDDEN_NODES, kernel_size=1),
                                         nn.ReLU(),
                                         Flatten(),
@@ -285,34 +308,52 @@ class Duet(torch.nn.Module):
                                        nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
                                        nn.ReLU(),
                                        nn.Dropout(p=DROPOUT_RATE))
+
         self.duet_comb = nn.Sequential(nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
                                        nn.ReLU(),
                                        nn.Dropout(p=DROPOUT_RATE),
                                        nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
                                        nn.ReLU(),
-                                       nn.Dropout(p=DROPOUT_RATE),
-                                       nn.Linear(NUM_HIDDEN_NODES, 1),
-                                       nn.ReLU())
-                                       # nn.Sigmoid())
+                                       nn.Dropout(p=DROPOUT_RATE))
+
+        # self.duet_comb = nn.Sequential(nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
+        #                                nn.ReLU(),
+        #                                nn.Dropout(p=DROPOUT_RATE),
+        #                                nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
+        #                                nn.ReLU(),
+        #                                nn.Dropout(p=DROPOUT_RATE),
+        #                                nn.Linear(NUM_HIDDEN_NODES, 1),
+        #                                nn.ReLU())
+        #                                # nn.Sigmoid())
+
+        self.duet_maxout = nn.Sequential(nn.Linear(NUM_HIDDEN_NODES, NUM_HIDDEN_NODES),
+                                        nn.ReLU(),
+                                        nn.Dropout(p=DROPOUT_RATE),
+                                        nn.Linear(NUM_HIDDEN_NODES, 1),
+                                        nn.ReLU())
 
         self.scale = torch.tensor([0.1], requires_grad=False).to(device)
 
 
-    def forward(self, x_local, x_dist_q, x_dist_d, x_mask_q, x_mask_d):
+    def forward(self, x_local, x_attr, x_dist_q, x_dist_d, x_mask_q, x_mask_d):
         if ARCH_TYPE != 1:
             h_local = self.duet_local(x_local)
+
         if ARCH_TYPE > 0:
             h_dist_q = self.duet_dist_q((self.embed(x_dist_q) * x_mask_q).permute(0, 2, 1))
             h_dist_d = self.duet_dist_d((self.embed(x_dist_d) * x_mask_d).permute(0, 2, 1))
             h_dist = self.duet_dist(h_dist_q.unsqueeze(-1) * h_dist_d)
-        y_out = self.duet_comb(
+
+        comb_out = self.duet_comb(
             (h_local + h_dist) if ARCH_TYPE == 2 else (h_dist if ARCH_TYPE == 1 else h_local))
 
+        h_attr = self.duet_attr(x_attr)
+
         # y_sig = torch.sigmoid(y_out)
-
         # pred = F.softmax(y_out, dim=0)
-
         # print_message("y_out size:{} pred size:{} ".format(y_out.size(), pred.size()))
+
+        y_out = self.duet_maxout(h_attr, comb_out)
 
         return y_out
 
@@ -368,7 +409,8 @@ def goRun(device, reader_train, reader_dev, reader_eval, ts, name):
                                                torch.from_numpy(features['mask_d'][i]).to(device)) for i in
                                            range(reader_train.num_docs)]), 1)
                 else:
-                    out = torch.cat(tuple([net(torch.from_numpy(features['local'][i]).to(device),
+                    out = torch.cat(tuple([net(torch.from_numpy(features['attr'][i]).to(device),
+                                               torch.from_numpy(features['local'][i]).to(device),
                                                torch.from_numpy(features['dist_q']).to(device),
                                                torch.from_numpy(features['dist_d'][i]).to(device),
                                                torch.from_numpy(features['mask_q']).to(device),
@@ -529,18 +571,6 @@ def goEval(res_dev, df_dev):
 
     # adNdcgPrint(df_new)
 
-    # with open(DATA_FILE_OUT_DEV, mode='w', encoding="utf-8") as f:
-    #     for qid, docs in res_dev.items():
-    #         ranked = sorted(docs, key=docs.get, reverse=True)
-    #         for i in range(min(len(ranked), 10)):
-    #             f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
-    #
-    # with open(DATA_FILE_OUT_EVAL, mode='w', encoding="utf-8") as f:
-    #     for qid, docs in res_eval.items():
-    #         ranked = sorted(docs, key=docs.get, reverse=True)
-    #         for i in range(min(len(ranked), 10)):
-    #             f.write('{}\t{}\t{}\n'.format(qid, ranked[i], i + 1))
-
     print_message('Finished Inference')
 
 
@@ -549,7 +579,7 @@ def goEnvInit():
 
     devName = "cpu"
     if torch.cuda.is_available():
-        devName = "cuda:1"
+        devName = "cuda:0"
 
     device = torch.device(devName)
 
@@ -570,6 +600,9 @@ MAX_DOC_TERMS = 200
 NUM_HIDDEN_NODES = 128
 TERM_WINDOW_SIZE = 3
 
+MAX_ATTENTION_WIDTH = 32
+NUM_ATTENTION_WIDTH = 6
+
 POOLING_KERNEL_WIDTH_QUERY = MAX_QUERY_TERMS - TERM_WINDOW_SIZE + 1  # 20 - 3 + 1 = 18
 POOLING_KERNEL_WIDTH_DOC = 100
 NUM_POOLING_WINDOWS_DOC = (MAX_DOC_TERMS - TERM_WINDOW_SIZE + 1) - POOLING_KERNEL_WIDTH_DOC + 1  # (200 - 3 + 1) - 100 + 1 = 99
@@ -583,7 +616,7 @@ DROPOUT_RATE = 0.5
 # NUM_ENSEMBLES = 1
 
 MB_SIZE = 1024
-EPOCH_SIZE = 512*16
+EPOCH_SIZE = 512*1
 NUM_EPOCHS = 1
 NUM_ENSEMBLES = 1
 
