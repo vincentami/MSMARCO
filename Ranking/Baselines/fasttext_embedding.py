@@ -22,7 +22,7 @@ def fasttext_embedding(sammpleFile, modelFile, vecFile):
 
     for x in ["dogo", "meño"]:
         neiVec = skmodel.get_nearest_neighbors(x)
-        print x, neiVec
+        print(x, neiVec)
 
     # skmodel.get_analogies("berlin", "germany", "france")
     with open(sammpleFile, 'r') as f1:
@@ -34,7 +34,7 @@ def fasttext_embedding(sammpleFile, modelFile, vecFile):
                 else :
                     wordMap[item] = 1
 
-        print "word num:%d" %(len(wordMap))
+        print("word num:%d" %(len(wordMap)))
 
     with open(vecFile, 'w') as f2:
         for k,y in wordMap.items():
